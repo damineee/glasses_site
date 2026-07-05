@@ -1,25 +1,72 @@
 
-import { useState,useEffect } from "react";
+import { useState,useEffect, useEffectEvent } from "react";
 import {Link} from 'react-router-dom';
 import { IoSearch, IoHeartOutline, IoCartOutline } from "react-icons/io5";
 import { FaGlasses } from "react-icons/fa6";
 import glases_svg from "../assets/glases_nav.svg";
 import contact_svg from "../assets/contact_nav.svg";
-import { motion } from "framer-motion";
+import { motion,AnimatePresence } from "framer-motion";
+import { supabase } from '../utils/supabase';
 import FadeIn from "./FadeIn";
+import { div } from "framer-motion/client";
+
+
+function getSubcategoryUrl(sub, slug) {
+  if (!sub.page_slug) return `/${slug}`;
+  if (sub.page_slug === "page") return `/${slug}/${sub.filter_query}`;
+  if (sub.page_slug === "color")return `/${slug}?colors=${sub.filter_query}`;
+  if (sub.page_slug==='merch') return `/${slug}?merch=${sub.filter_query}`;
+  if (sub.page_slug==='low') return `/${sub.filter_query}`;
+  if (sub.page_slug==='price') return `/${slug}?prices=${sub.filter_query}`;
+}
+
 export default function Navbar(){
     const [isScrolled,setIsScrolled]=useState(false);
     const [isHovered,setIsHovered]=useState(false);
-const menuItems = [
-  { id: 1, name: "Eyeglasses", url: "/catalog?type=eyeglasses" },
-  { id: 2, name: "Sunglasses", url: "/catalog?type=sunglasses" },
-  { id: 3, name: "Contacts", url: "/contacts" },
-  { id: 4, name: "Eye exams", url: "/exams" },
-  { id: 5, name: "Insurance", url: "/insurance" },
-  { id: 6, name: "Accessories", url: "/accessories" },
-  { id: 7, name: "Style quiz", url: "/quiz" },
-  {id:8,name:"Intelligent Eyewear",url:"/eyewear"},
-];
+    const [dbCategories, setDbCategories] = useState([]);
+    const [activeMenuSlug, setActiveMenuSlug] = useState(null);
+  const currentCategory = dbCategories.find((cat) => cat.slug === activeMenuSlug);
+
+
+  useEffect(()=>{
+    const fetchNavBarData=async()=>{
+      const { data, error } = await supabase
+        .from("categories")
+        .select(
+          `id,name,slug,image_women_url, image_men_url,women_text, men_text,women_link_url,men_link_url,
+        subcategory_groups(
+        id,group_name,
+        subcategories(
+        id,name,filter_query,
+        is_new_badge,display_order,page_slug))`,
+        )
+        .order("display_order", { ascending: true })
+        .order("display_order", {
+          foreignTable: "subcategory_groups.subcategories",
+          ascending: true,
+        });
+
+      if (!error && data){
+        setDbCategories(data);
+      }else{
+        console.error("Eroare la incarcarea meniului:",error);
+      }
+    };
+    fetchNavBarData();
+  },[]);
+
+
+    useEffect(()=>{
+      if(activeMenuSlug){
+        document.body.style.overflow="hidden";
+      }else{
+        document.body.style.overflow="unset";
+      }
+      return()=>{
+        document.body.style.overflow="unset";
+      };
+    },[activeMenuSlug]);
+
     useEffect(()=>{
         const handleScroll=()=>{
             if (window.scrollY>20){
@@ -32,7 +79,20 @@ const menuItems = [
         return ()=> window.removeEventListener('scroll',handleScroll);
     },[]);
 
-    const isMenuWhite = isScrolled || isHovered;
+    const isMenuWhite = isScrolled || isHovered ||activeMenuSlug!==null;
+
+    
+
+
+    const handleCategoryClick=(slug,e)=>{
+      e.preventDefault();
+      if(activeMenuSlug===slug){
+        setActiveMenuSlug(null);
+      }else{
+        setActiveMenuSlug(slug);
+      }
+    };
+
 const container = {
   hidden: { opacity: 0 },
   visible: {
@@ -47,12 +107,14 @@ const itemm = {
   hidden: { opacity: 0, y: -10 },
   visible: { opacity: 1, y: 0 },
 };
+
+
     return (
       <header className="fixed top-0 left-0 w-full z-50 ">
         <div className="flex flex-row w-full h-10 bg-[#072369] justify-between px-12 items-center text-white">
           <FadeIn>
             <Link
-              to="/"
+              to="/eyeglasses"
               className="flex flex-row gap-2 items-center hover:opacity-80 transition-opacity"
             >
               <img src={glases_svg} alt="icon" className="h-5" />
@@ -72,7 +134,7 @@ const itemm = {
 
           <FadeIn>
             <Link
-              to="/"
+              to="/contacts"
               className="flex flex-row gap-2 items-center hover:opacity-80 transition-opacity"
             >
               <img src={contact_svg} alt="icon" className="h-5" />
@@ -82,7 +144,6 @@ const itemm = {
             </Link>
           </FadeIn>
         </div>
-
         <div
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -96,7 +157,25 @@ const itemm = {
             animate="visible"
             className="flex flex-row gap-5 text-[16px] font-sans font-semibold "
           >
-            {menuItems.map((item) => (
+            {dbCategories.map((category) => {
+              const isActive = activeMenuSlug === category.slug;
+              return (
+                <div key={category.id}>
+                  <Link
+                    onClick={(e) => handleCategoryClick(category.slug, e)}
+                    className={` ${
+                      isActive
+                        ? "text-[#1050D0]"
+                        : "text-black hover:text-[#3A434C] transition-colors"
+                    }`}
+                  >
+                    <motion.p variants={itemm}>{category.name}</motion.p>
+                  </Link>
+                </div>
+              );
+            })}
+
+            {/* {menuItems.map((item) => (
               <Link
                 key={item.id}
                 to={item.url}
@@ -104,7 +183,7 @@ const itemm = {
               >
                 <motion.p variants={itemm}>{item.name}</motion.p>
               </Link>
-            ))}
+            ))} */}
           </motion.div>
 
           <motion.div
@@ -124,7 +203,7 @@ const itemm = {
                   y: 1,
                   transition: { duration: 0.3, ease: "easeInOut" },
                 }}
-                className="border-1 h-12 w-31 rounded-4xl items-center justify-center flex gap-2    hover:border-gray-500  hover:opacity-90 overflow-hidden  hover:shadow-lg hover:shadow-[#1050D0]/30"
+                className="border h-12 w-31 rounded-4xl items-center justify-center flex gap-2    hover:border-gray-500  hover:opacity-90 overflow-hidden  hover:shadow-lg hover:shadow-[#1050D0]/30"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -232,6 +311,125 @@ const itemm = {
             </Link>
           </motion.div>
         </div>
+
+        <AnimatePresence>
+          {activeMenuSlug && (
+            <>
+              <motion.div
+                key={activeMenuSlug}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="absolute top-30 left-0 w-full bg-white text-black shadow-xl border-t border-gray-100 pl-12  z-40 flex flex-row justify-between "
+              >
+                <div className="grid grid-cols-4  flex-1 pt-6 pb-10">
+                  {currentCategory.subcategory_groups?.map((group) => (
+                    <div key={group.id} className="flex flex-col gap-5">
+                      <p className="text-[14px] font-sans font-semibold text-gray-600">
+                        {group.group_name}
+                      </p>
+
+                      <ul className="flex flex-col gap-4 text-[14px] font-sans font-semibold">
+                        {group.subcategories?.map((sub) => (
+                          <li key={sub.id}>
+                            <Link
+                              to={getSubcategoryUrl(sub, currentCategory.slug)}
+                              className="group w-max inline-flex"
+                              onClick={() => setActiveMenuSlug(null)}
+                            >
+                              <div className="flex-row flex  items-center transition-transform duration-200 ease-out group-hover:translate-x-1.5">
+                                <p className="transition-all duration-50 ease-out group-hover:text-gray-800">
+                                  {sub.name}
+                                </p>
+                                <div className="pl-1">
+                                  {sub.is_new_badge && (
+                                    <span className="text-[#1050D0] text-[11px] font-bold rounded-sm px-2 py-[4.5px] bg-blue-100">
+                                      New
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="opacity-0   transition-all duration-200 ease-out group-hover:opacity-100 text-gray-800">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={2.5}
+                                    stroke="currentColor"
+                                    className="w-8 h-3.5"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                                    />
+                                  </svg>
+                                </span>
+                              </div>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-row w-[50%] min-w-[380px] h-110">
+                  <div className="relative flex overflow-hidden w-1/2 h-full">
+                    <img
+                      src={
+                        currentCategory?.image_women_url ||
+                        "https://via.placeholder.com/200x300"
+                      }
+                      alt="Shop Women"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    <div className="absolute bottom-6 left-0 right-0 flex justify-center">
+                      <Link
+                        to={`/${activeMenuSlug}${currentCategory?.women_link_url}`}
+                        onClick={() => setActiveMenuSlug(null)}
+                        className="bg-white text-black font-bold text-[13px] px-4 py-2 rounded-full hover:bg-gray-100 transition-colors"
+                      >
+                        {currentCategory?.women_text}
+                      </Link>
+                    </div>
+                  </div>
+                  <div className="relative flex w-1/2 h-full overflow-hidden">
+                    <img
+                      src={
+                        currentCategory?.image_men_url ||
+                        "https://via.placeholder.com/200x300"
+                      }
+                      alt="Shop Men"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    <div className="absolute bottom-6 left-0 right-0 flex justify-center">
+                      <Link
+                        to={`/${activeMenuSlug}${currentCategory?.men_link_url}`}
+                        onClick={() => setActiveMenuSlug(null)}
+                        className="bg-white text-black font-bold text-[13px] px-4 py-2 rounded-full hover:bg-gray-100 transition-colors"
+                      >
+                        {currentCategory?.men_text}
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                onClick={() => setActiveMenuSlug(null)}
+                className="fixed left-0 w-full bg-black/15  z-30"
+                style={{ top: "400px", height: "calc(100vh - 400px)" }}
+              />
+            </>
+          )}
+        </AnimatePresence>
       </header>
     );
 }

@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { SlArrowRight } from "react-icons/sl";
 import sport_glas from "../assets/girls_sport.avif";
 import boaz from "../assets/boaz.avif";
+import NewArrivalsSwiper from "../components/NewArrivalsSwiper";
 //flex h-12 w-43 rounded-4xl bg-[#1050D0] overflow-hidden transition-all duration-300 ease-in-out hover:bg-[#0b3fa3] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#1050D0]/30
 export default function Home() {
   const ref = useRef(null);
@@ -92,7 +93,7 @@ export default function Home() {
             className="flex h-12 w-43 rounded-4xl bg-[#072369] overflow-hidden  hover:bg-[#102b6d]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
           >
             <Link
-              to="/"
+              to="/eyeglasses"
               className="h-full w-full flex items-center justify-center"
             >
               <p className="text-white font-semibold font-sans">
@@ -147,7 +148,7 @@ export default function Home() {
         >
           <div className="">
             <Link
-              to="/"
+              to="/contacts"
               className=" hover:opacity-80 transition-opacity
               "
             >
@@ -162,7 +163,7 @@ export default function Home() {
           </div>
           <div className="">
             <Link
-              to="/"
+              to="/insurance"
               className=" hover:opacity-80 transition-opacity
               "
             >
@@ -194,7 +195,7 @@ export default function Home() {
           <img
             src={sport_glas}
             alt="Sport glasses"
-            className="w-auto h-auto transition-transform duration-400 group-hover:scale-103"
+            className="w-full h-full object-cover object-top  transition-transform duration-400 group-hover:scale-103"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
           <div className="absolute left-12 bottom-17 flex flex-col ">
@@ -209,6 +210,14 @@ export default function Home() {
           </div>
         </Link>
       </section>
+
+      <div className="py-10 px-12 ">
+        <NewArrivalsSwiper />
+      </div>
+
+      <div className="flex px-12 py-10 items-center justify-center">
+        <h1 className="text-[30px] font-serif">Four ways to use your vision benefits</h1>
+      </div>
     </div>
   );
 }
