@@ -108,7 +108,7 @@ return (
         ))}
       </div> */}
 
-      <div className="flex-row flex absolute left-6 bottom-27 justify-between items-center z-10 gap-2">
+      <div className="flex-row flex absolute left-6 bottom-27 justify-between items-center z-10 gap-3.5">
         {product.product_variants?.map((v) => (
           <ColorSwatch
             key={v.id}
@@ -126,7 +126,7 @@ return (
         to=""
         onClick={(e) => e.stopPropagation()}
         className={` flex absolute bottom-6 left-6 right-6 z-10  border w-auto h-12 rounded-4xl items-center justify-center transition-color duration-200 hover:bg-[#1050D0] hover:border-transparent hover:text-white
-           ${hovered ? "text-white border-white" : "text-black  border-gray-700"}`}
+           ${activeVariant?.hover_image_url && hovered ? "text-white border-white" : "text-black  border-gray-700"}`}
       >
         <p className="text-[16px] font-sans font-semibold ">
           Select lenses and buy
@@ -137,25 +137,26 @@ return (
         to={`/${product?.category}/${product?.slug}/${activeVariant?.color_name_slug}?w=${product?.frame_width_slug}`}
         className="block "
       >
-        <div className="relative aspect-[6.2/7]">
+        {/* aspect-[6.2/7] */}
+        <div className="relative aspect-[5/5]">
           <img
             src={activeVariant?.main_image_url || "https://placehold.co/400"}
             alt={product?.name}
-            className={`w-full h-full  object-contain absolute transform scale-93 -translate-y-10 inset-0 transition-opacity duration-200 ${hovered ? "opacity-0" : "opacity-100"}`}
+            className={`w-full h-full  object-contain absolute transform scale-93 -translate-y-10 inset-0 transition-opacity duration-200 ${activeVariant?.hover_image_url && hovered ? "opacity-0" : "opacity-100"}`}
           />
-
-          <img
-            src={activeVariant?.hover_image_url}
-            alt={product?.name}
-            className={`w-full h-full  object-cover absolute inset-0 transition-opacity duration-200 ${hovered ? "opacity-100 " : "opacity-0"}`}
+          {activeVariant?.hover_image_url && (
+            <img
+              src={activeVariant?.hover_image_url}
+              alt={product?.name}
+              className={`w-full h-full  object-cover absolute inset-0 transition-opacity duration-200 ${hovered ? "opacity-100 " : "opacity-0"}`}
+            />
+          )}
+          <div
+            className={`absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-2 transition-opacity duration-200 ${activeVariant?.hover_image_url && hovered ? "opacity-100 " : "opacity-0"}`}
           />
 
           <div
-            className={`absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-2 transition-opacity duration-200 ${hovered ? "opacity-100 " : "opacity-0"}`}
-          />
-
-          <div
-            className={`absolute z-10 left-6 right-6 flex flex-row bottom-34 justify-between items-center transition-colors duration-200 ${hovered ? "text-white" : "text-black"}`}
+            className={`absolute z-10 left-6 right-6 flex flex-row bottom-34 justify-between items-center transition-colors duration-200 ${activeVariant?.hover_image_url && hovered ? "text-white" : "text-black"}`}
           >
             <p className="font-serif text-[24px] font-medium">{product.name}</p>
             <p className="font-sans text-[15px] font-bold">

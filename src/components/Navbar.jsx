@@ -151,40 +151,32 @@ const itemm = {
             isMenuWhite ? "bg-white " : "bg-transparent"
           }`}
         >
-          <motion.div
-            variants={container}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-row gap-5 text-[16px] font-sans font-semibold "
-          >
-            {dbCategories.map((category) => {
-              const isActive = activeMenuSlug === category.slug;
-              return (
-                <div key={category.id}>
-                  <Link
-                    onClick={(e) => handleCategoryClick(category.slug, e)}
-                    className={` ${
-                      isActive
-                        ? "text-[#1050D0]"
-                        : "text-black hover:text-[#3A434C] transition-colors"
-                    }`}
-                  >
-                    <motion.p variants={itemm}>{category.name}</motion.p>
-                  </Link>
-                </div>
-              );
-            })}
-
-            {/* {menuItems.map((item) => (
-              <Link
-                key={item.id}
-                to={item.url}
-                className="hover:text-[#3A434C] transition-colors"
-              >
-                <motion.p variants={itemm}>{item.name}</motion.p>
-              </Link>
-            ))} */}
-          </motion.div>
+          {dbCategories.length > 0 && (
+            <motion.div
+              variants={container}
+              initial="hidden"
+              animate="visible"
+              className="flex flex-row gap-5 text-[16px] font-sans font-semibold "
+            >
+              {dbCategories.map((category) => {
+                const isActive = activeMenuSlug === category.slug;
+                return (
+                  <motion.div key={category.id} variants={itemm}>
+                    <Link
+                      onClick={(e) => handleCategoryClick(category.slug, e)}
+                      className={` ${
+                        isActive
+                          ? "text-[#1050D0]"
+                          : "text-black hover:text-[#3A434C] transition-colors"
+                      }`}
+                    >
+                      <p>{category.name}</p>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          )}
 
           <motion.div
             initial={{ opacity: 0, x: 150 }}
