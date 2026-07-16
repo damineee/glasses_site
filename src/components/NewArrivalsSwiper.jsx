@@ -138,7 +138,7 @@ return (
         className="block "
       >
         {/* aspect-[6.2/7] */}
-        <div className="relative aspect-[5/5]">
+        <div className="relative aspect-square">
           <img
             src={activeVariant?.main_image_url || "https://placehold.co/400"}
             alt={product?.name}
@@ -207,7 +207,7 @@ export default function NewArrivalsSwiper(){
 
     return (
       <section className="">
-        <div className="flex flex-row justify-between items-center pb-5">
+        <div className="flex flex-row justify-between items-center pb-5 px-12">
           <div className="flex flex-row text-[23px] font-semibold font-sans">
             <p className=" pr-1.5">Shop by</p>
             <Link to="" className=" text-[#1050D0]">
@@ -218,7 +218,7 @@ export default function NewArrivalsSwiper(){
           <div className="flex flex-row gap-2">
             <button
               ref={prevRef}
-              className="flex cursor-pointer p-6 rounded-full border border-gray-400 items-center justify-center"
+              className="flex cursor-pointer h-12 w-12 rounded-full border border-gray-300 items-center justify-center transition-color  duration-200 [&.swiper-button-disabled]:opacity-30 [&.swiper-button-disabled]:cursor-default [&.swiper-button-disabled]:hover:border-gray-300 hover:border-gray-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -227,6 +227,7 @@ export default function NewArrivalsSwiper(){
                 fill="currentColor"
                 class="bi bi-arrow-left"
                 viewBox="0 0 16 16"
+                className="h-7 w-7"
               >
                 <path
                   fill-rule="evenodd"
@@ -236,7 +237,7 @@ export default function NewArrivalsSwiper(){
             </button>
             <button
               ref={nextRef}
-              className="flex cursor-pointer p-6 rounded-full border border-gray-400 items-center justify-center"
+              className="flex cursor-pointer h-12 w-12 rounded-full border border-gray-300 items-center justify-center transition-color  duration-200 [&.swiper-button-disabled]:opacity-30 [&.swiper-button-disabled]:cursor-default [&.swiper-button-disabled]:hover:border-gray-300 hover:border-gray-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -245,6 +246,7 @@ export default function NewArrivalsSwiper(){
                 fill="currentColor"
                 class="bi bi-arrow-right"
                 viewBox="0 0 16 16"
+                className="h-7 w-7"
               >
                 <path
                   fill-rule="evenodd"
@@ -266,14 +268,27 @@ export default function NewArrivalsSwiper(){
           }}
           spaceBetween={12}
           slidesPerView={1}
+          slidesOffsetBefore={21}
+          slidesOffsetAfter={21}
           breakpoints={{
-            640: { slidesPerView: 1 },
-            768: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
+            640: {
+              slidesPerView: 1,
+              slidesOffsetBefore: 30,
+              slidesOffsetAfter: 30,
+            },
+            768: {
+              slidesPerView: 2,
+              slidesOffsetBefore: 46,
+              slidesOffsetAfter: 46,
+            },
+            1024: {
+              slidesPerView: 3,
+              slidesOffsetBefore: 46,
+              slidesOffsetAfter: 46,
+            },
           }}
         >
           {products.map((product) => {
-           
             return (
               <SwiperSlide key={product.id}>
                 <ProductCard product={product} />
