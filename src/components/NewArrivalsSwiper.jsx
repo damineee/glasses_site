@@ -6,6 +6,7 @@ import { supabase } from "../utils/supabase";
 import {motion} from "framer-motion";
 import "swiper/css";
 import "swiper/css/navigation";
+import { div, section } from "framer-motion/client";
 
 function ColorSwatch({ v, isActive, onClick }) {
   const [hovered, setHovered] = useState(false);
@@ -30,6 +31,31 @@ function ColorSwatch({ v, isActive, onClick }) {
     </button>
   );
 }
+
+function ProductCardSkeleton(){
+  return (
+    <div className="flex flex-col animate-pulse">
+      <div className="relative rounded-xs bg-[#FCFBF9] aspect-square animate-pulse">
+        <div className="absolute top-6 left-6 h-8 w-8 rounded-full bg-gray-200" />
+        <div className="absolute top-6 right-6 w-23 h-8 rounded-full bg-gray-200" />
+
+        <div className="absolute left-6  bottom-27 flex gap-3">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="w-5 h-5 rounded-full bg-gray-200" />
+          ))}
+        </div>
+        <div className="absolute left-6 right-6 bottom-34 flex items-center justify-between">
+          <div className="w-20 h-6 rounded bg-gray-200" />
+          <div className="w-8 h-5 rounded bg-gray-200" />
+        </div>
+
+        {/* Button */}
+        <div className="absolute bottom-6 left-6 right-6 h-12 rounded-full bg-gray-200" />
+      </div>
+    </div>
+  );
+}
+
 
 
 function ProductCard({ product}) {
@@ -202,7 +228,25 @@ export default function NewArrivalsSwiper(){
         fetchNewArrivals();
     },[]);
 
-    if(loading) return <div className="text-[14px] py-3 px-12">Loading new arrival...</div>
+    if(loading) {
+      return (
+        <section>
+          <div className="flex justify-between items-center pb-5 px-12">
+            <div className="p-1.5 w-55 h-8 rounded-lg bg-gray-200 animate-pulse" />
+            <div className="flex flex-row gap-2">
+              <div className="h-12 w-12 bg-gray-200 animate-pulse rounded-full" />
+              <div className="h-12 w-12 bg-gray-200 animate-pulse rounded-full" />
+            </div>
+          </div>
+
+          <div className="grid grid-col-1 md:grid-cols-2 lg:grid-cols-3 gap-3 px-12">
+            {[...Array(3)].map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        </section>
+      );
+    }
 
 
     return (
@@ -281,7 +325,7 @@ export default function NewArrivalsSwiper(){
               slidesOffsetBefore: 46,
               slidesOffsetAfter: 46,
             },
-            1024: {
+            1124: {
               slidesPerView: 3,
               slidesOffsetBefore: 46,
               slidesOffsetAfter: 46,

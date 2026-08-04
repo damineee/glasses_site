@@ -1,6 +1,6 @@
 
 import { useState,useEffect, useEffectEvent } from "react";
-import {Link} from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 import { IoSearch, IoHeartOutline, IoCartOutline } from "react-icons/io5";
 import { FaGlasses } from "react-icons/fa6";
 import glases_svg from "../assets/glases_nav.svg";
@@ -25,7 +25,19 @@ export default function Navbar(){
     const [isHovered,setIsHovered]=useState(false);
     const [dbCategories, setDbCategories] = useState([]);
     const [activeMenuSlug, setActiveMenuSlug] = useState(null);
+
+    const location=useLocation();
+
+    const isProductDetailPage =
+      location.pathname.split("/").filter(Boolean).length >= 3;
+
+
   const currentCategory = dbCategories.find((cat) => cat.slug === activeMenuSlug);
+
+
+  useEffect(()=>{
+    setActiveMenuSlug(null);
+  },[location.pathname]);
 
 
   useEffect(()=>{
@@ -79,7 +91,7 @@ export default function Navbar(){
         return ()=> window.removeEventListener('scroll',handleScroll);
     },[]);
 
-    const isMenuWhite = isScrolled || isHovered ||activeMenuSlug!==null;
+    const isMenuWhite = isScrolled || isHovered ||activeMenuSlug!==null || isProductDetailPage;
 
     
 
@@ -147,10 +159,23 @@ const itemm = {
         <div
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`w-full h-16 flex flex-row py-10 px-12 justify-between items-center  transition-all duration-300 ${
-            isMenuWhite ? "bg-white " : "bg-transparent"
+          className={`w-full h-16 flex flex-row py-10 px-12 justify-between items-center z-50 border-b relative transition-colors  duration-300  ${
+            isMenuWhite
+              ? "bg-white border-gray-100 "
+              : "bg-transparent border-transparent"
           }`}
         >
+          {dbCategories.length == 0 && (
+            <div className="flex flex-row gap-5 ">
+              {[...Array(3)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-23 h-5 bg-gray-300 rounded-md animate-pulse"
+                />
+              ))}
+            </div>
+          )}
+
           {dbCategories.length > 0 && (
             <motion.div
               variants={container}
@@ -313,7 +338,7 @@ const itemm = {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25, ease: "easeInOut" }}
-                className="absolute top-30 left-0 w-full bg-white text-black shadow-xl border-t border-gray-100 pl-12  z-40 flex flex-row justify-between "
+                className="absolute top-30 left-0 w-full bg-white text-black shadow-xl  pl-12  z-40 flex flex-row justify-between min-h-110"
               >
                 <div className="grid grid-cols-4  flex-1 pt-6 pb-10">
                   {currentCategory.subcategory_groups?.map((group) => (
@@ -366,7 +391,7 @@ const itemm = {
                   ))}
                 </div>
 
-                <div className="flex flex-row w-[50%] min-w-[380px] h-110">
+                <div className="flex flex-row w-[50%] min-w-[380px] ">
                   <div className="relative flex overflow-hidden w-1/2 h-full">
                     <img
                       src={

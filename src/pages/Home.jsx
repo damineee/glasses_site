@@ -11,12 +11,8 @@ import vision4 from "../assets/visionBenfoto_4.avif";
 import vision1 from "../assets/visionBenfoto_1.avif";
 import vision2 from "../assets/visionBenfoto_2.avif";
 import vision3 from "../assets/visionBenfoto_3.avif";
-import warby from "../assets/warby.svg";
-import davis from "../assets/davis.svg";
-import superior from "../assets/superior.svg";
-import spectra from "../assets/spectra.svg";
-import united from "../assets/united.svg";
-import bluecross from "../assets/bluecross.svg";
+import InsuranceForm from "../components/InsuranceForm";
+
 //flex h-12 w-43 rounded-4xl bg-[#1050D0] overflow-hidden transition-all duration-300 ease-in-out hover:bg-[#0b3fa3] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#1050D0]/30
 
 
@@ -66,11 +62,11 @@ import bluecross from "../assets/bluecross.svg";
 
 
     return (
-      <div className="w-40 h-8">
+      <div className="w-45 h-10">
         <img
           src={images[currentIndex]}
           alt={`Warby Parker Slide ${currentIndex + 1}`}
-          className="max-w-full max-h-full object-contain transition-opacity duration-1000 ease-in-out opacity-100"
+          className="max-w-full max-h-full object-contain transition-opacity duration-1000 ease-in opacity-100"
         />
       </div>
     );
@@ -317,64 +313,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex flex-col mx-15 my-15 bg-[#072369] items-center gap-4 py-10 rounded-2xl  justify-center">
-        <div className="flex flex-row items-center justify-center gap-3">
-          <div className="w-40">
-            <img
-              src={warby}
-              alt="warby"
-              className="max-w-full max-h-full object-contain"
-            />
-          </div>
-
-          <AutoChangingSlidesShow />
-        </div>
-
-        <p className="text-[50px] font-serif text-white">
-          It’s easy to use your insurance
-        </p>
-        <div className="text-[19px] font font-serif text-white items-center justify-center flex flex-col">
-          <p>
-            Enter your information to see if you have eligible benefits for
-            frames, contacts, or eye exams. If you do,
-          </p>
-          <span>
-            we’ll apply them automatically. This may vary by state or plan.
-          </span>
-        </div>
-
-        <div className="flex flex-row gap-4 ">
-          <div>
-            <input
-              type="text"
-              placeholder="First name"
-              className="px-8 py-4 shadow-sm rounded-xl bg-white"
-            />
-          </div>
-
-          <div>
-            <input
-              type="text"
-              placeholder="Last name"
-              className="px-8 py-4 shadow-sm rounded-xl bg-white"
-            />
-          </div>
-          <div>
-            <input
-              type="date"
-              placeholder="Date of birth"
-              className="px-8 py-4 shadow-sm rounded-xl bg-white"
-            />
-          </div>
-          <div>
-            <input
-              type="number"
-              placeholder="Zip code"
-              className="px-8 py-4 shadow-sm rounded-xl bg-white"
-            />
-          </div>
-        </div>
-      </div>
+    <InsuranceForm />
     </div>
   );
 }
