@@ -63,7 +63,7 @@ const [hovered,setHovered]=useState(false);
 const [activeVariant,setActiveVariant]=useState(product.product_variants?.[0]);
 return (
   <div
-    className="flex flex-col group"
+    className="flex flex-col "
     onMouseEnter={() => setHovered(true)}
     onMouseLeave={() => setHovered(false)}
   >
@@ -79,24 +79,28 @@ return (
           y: 1,
           transition: { duration: 0.3, ease: "easeInOut" },
         }}
-        className="group flex absolute cursor-pointer top-6 left-6 z-10 h-8 w-8 rounded-full bg-white items-center justify-center overflow-hidden  hover:shadow-lg hover:shadow-[#00000015]"
+        className="group flex absolute cursor-pointer top-6 left-6 z-10 h-8 w-8 rounded-full bg-white items-center justify-center overflow-hidden  transition-all duration-200  hover:shadow-lg hover:shadow-[#00000015]"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          class="bi bi-heart"
-          viewBox="0 0 16 16"
-          className=" h-3.5 opacity-80 group-hover:opacity-100 group-hover:stroke:black group-hover:stroke-width:0.4 transition-opacity duration-200"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-heart-icon lucide-heart"
+          className="w-4 h-4 opacity-[80%] group-hover:opacity-[100%]"
         >
-          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+          <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
         </svg>
       </motion.button>
 
       <button
         onClick={(e) => e.stopPropagation()}
-        className=" flex flex-row gap-2 absolute cursor-pointer top-6 right-6 z-10 h-8 w-23 rounded-full bg-white items-center justify-center overflow-hidden  hover:shadow-lg hover:shadow-[#00000015]"
+        className=" flex flex-row gap-2 absolute cursor-pointer top-6 right-6 z-10 px-3.5 py-1.5 rounded-full bg-white items-center justify-center overflow-hidden  hover:shadow-lg hover:shadow-[#00000015]"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

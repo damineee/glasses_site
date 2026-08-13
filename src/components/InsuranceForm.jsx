@@ -164,8 +164,8 @@ const renderInput=(name,label,type="text",maxLength,colSpan="col-span-4")=>{
           />
           <label
             htmlFor={name}
-            className="absolute left-4 pointer-events-none text-gray-600 font-medium transition-all duration-200 origin-left peer-placeholder-shown:top-4 
-          peer-focus:top-2 peer-focus:text-[11px] peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:text-[11px]"
+            className="absolute left-4 pointer-events-none text-gray-600  font-medium transition-all duration-200 origin-left peer-placeholder-shown:top-4 
+          peer-focus:top-2  peer-focus:text-[11px] peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:text-[11px]"
           >
             {label}
           </label>
@@ -180,122 +180,127 @@ const renderInput=(name,label,type="text",maxLength,colSpan="col-span-4")=>{
 }
 
     return (
-      <div className="flex flex-col mx-15 my-15 bg-[#061f5e] items-center gap-4 py-10 rounded-2xl  justify-center">
-        <div className="flex flex-row items-center justify-center gap-3">
-          <div className="w-45">
-            <img
-              src={warby}
-              alt="warby"
-              className="max-w-full max-h-full object-contain"
-            />
+      <div className="flex flex-col mx-4 sm:mx-5 my-8 lg:mx-12 lg:my-15 bg-[#061f5e] items-center  py-10 rounded-2xl  justify-center  ">
+        <div className="flex flex-col w-full max-w-[90%]  md:max-w-[670px] xl:max-w-[900px] mx-auto items-center justify-center gap-3 md:gap-4">
+          <div className="flex flex-row items-center justify-center gap-3">
+            <div className="w-45">
+              <img
+                src={warby}
+                alt="warby"
+                className="max-w-full max-h-full object-contain"
+              />
+            </div>
+
+            <AutoChangingSlidesShow />
           </div>
 
-          <AutoChangingSlidesShow />
-        </div>
-
-        <p className="text-[50px] font-serif text-white">
-          It’s easy to use your insurance
-        </p>
-        <div className="text-[19px] font font-serif text-white items-center justify-center flex flex-col">
-          <p>
-            Enter your information to see if you have eligible benefits for
-            frames, contacts, or eye exams. If you do,
+          <p className="xl:text-[52px] font-serif text-white text-[31px] md:text-[33px] text-center">
+            It’s easy to use your insurance
           </p>
-          <span>
-            we’ll apply them automatically. This may vary by state or plan.
-          </span>
-        </div>
 
-        <form
-          onSubmit={handleSubmit}
-          noValidate
-          className="max-w-4xl mx-auto mt-2"
-        >
-          <div className="grid md:grid-cols-12 gap-4 mb-10">
-            {renderInput(
-              "firstName",
-              "First name",
-              "text",
-              undefined,
-              "col-span-4",
-            )}
-            {renderInput(
-              "lastName",
-              "Last name",
-              "text",
-              undefined,
-              "col-span-4",
-            )}
-            {renderInput(
-              "dateOfBirth",
-              "Date of birth",
-              "date",
-              undefined,
-              "col-span-2 ",
-            )}
-            {renderInput("zipCode", "Zip code", "text", 5, "col-span-2")}
-          </div>
+          <p className=" text-[15px] md:text-[19px] font font-serif text-white text-center xl:text-[21px]">
+            Enter your information to see if you have eligible benefits for
+            frames, contacts, or eye exams. If you do, we’ll apply them
+            automatically. This may vary by state or plan.
+          </p>
 
-          <div className="flex items-center justify-center gap-2.5 cursor-pointer select-none text-white">
-            <input
-              type="checkbox"
-              id="isDependent"
-              name="isDependent"
-              checked={formData.isDependent}
-              onChange={handleChange}
-              className="w-5.5 h-5.5 border-lg rounded border-gray-300 cursor-pointer accent-white"
-            />
-            <label
-              htmlFor="isDependent"
-              className="text-[15px] cursor-pointer font-medium"
-            >
-              I am a dependent on this insurance policy
-            </label>
-          </div>
-          {formData.isDependent && (
-            <div className="grid md:grid-cols-12 gap-4 mt-9">
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className=" w-full mt-2"
+          >
+            <div className="grid grid-col-1 space-y-2 md:grid-cols-3 xl:grid-cols-12 gap-3 xl:gap-4  mb-4 md:mb-10">
               {renderInput(
-                "policyholderFirstName",
-                "Policyholder’s first name",
+                "firstName",
+                "First name",
                 "text",
                 undefined,
-                "col-span-4",
+                "md:col-span-1 xl:col-span-4",
               )}
               {renderInput(
-                "policyholderLastName",
-                "Policyholder’s last name",
+                "lastName",
+                "Last name",
                 "text",
                 undefined,
-                "col-span-4",
+                "md:col-span-1 xl:col-span-4",
               )}
               {renderInput(
-                "policyholderDateOfBirth",
-                "Policyholder’s date of birth",
+                "dateOfBirth",
+                "Date of birth",
                 "date",
                 undefined,
-                "col-span-4",
+                "md:col-span-1 xl:col-span-2 ",
+              )}
+              {renderInput(
+                "zipCode",
+                "Zip code",
+                "text",
+                5,
+                "md:col-span-3 xl:col-span-2",
               )}
             </div>
-          )}
-          <div className="flex flex-col gap-3 items-center justify-center mt-7">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-white font-semibold px-6 py-3 rounded-4xl shadow-sm disabled:opacity-50  cursor-pointer text-[16px] "
-            >
-              {loading ? (
-                <p className="animate-pulse">Checking...</p>
-              ) : (
-                "Check my benefits"
-              )}
-            </button>
-            {successMsg && (
-              <p className=" text-green-300 font-semibold text-sm">
-                {successMsg}
-              </p>
+
+            <div className="flex items-center justify-center gap-2.5 cursor-pointer select-none text-white">
+              <input
+                type="checkbox"
+                id="isDependent"
+                name="isDependent"
+                checked={formData.isDependent}
+                onChange={handleChange}
+                className="w-5.5 h-5.5 border-lg rounded border-gray-300 cursor-pointer accent-white"
+              />
+              <label
+                htmlFor="isDependent"
+                className="text-[15px] cursor-pointer font-medium"
+              >
+                I am a dependent on this insurance policy
+              </label>
+            </div>
+            {formData.isDependent && (
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mt-9">
+                {renderInput(
+                  "policyholderFirstName",
+                  "Policyholder’s first name",
+                  "text",
+                  undefined,
+                  "md:col-span-4",
+                )}
+                {renderInput(
+                  "policyholderLastName",
+                  "Policyholder’s last name",
+                  "text",
+                  undefined,
+                  "md:col-span-4",
+                )}
+                {renderInput(
+                  "policyholderDateOfBirth",
+                  "Policyholder’s date of birth",
+                  "date",
+                  undefined,
+                  "md:col-span-4",
+                )}
+              </div>
             )}
-          </div>
-        </form>
+            <div className="flex flex-col gap-3 items-center justify-center mt-7">
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-white font-semibold px-6 py-3 rounded-4xl shadow-sm disabled:opacity-50  cursor-pointer text-[16px] "
+              >
+                {loading ? (
+                  <p className="animate-pulse">Checking...</p>
+                ) : (
+                  "Check my benefits"
+                )}
+              </button>
+              {successMsg && (
+                <p className=" text-green-300 font-semibold text-sm">
+                  {successMsg}
+                </p>
+              )}
+            </div>
+          </form>
+        </div>
       </div>
     );  
 

@@ -29,7 +29,7 @@ export default function Navbar(){
     const location=useLocation();
 
     const isProductDetailPage =
-      location.pathname.split("/").filter(Boolean).length >= 3;
+      location.pathname.split("/").filter(Boolean).length >= 1;
 
 
   const currentCategory = dbCategories.find((cat) => cat.slug === activeMenuSlug);
@@ -241,7 +241,7 @@ const itemm = {
             </Link>
 
             {/* {SearchBar} */}
-            <Link className="">
+            <Link to="/search" className="">
               <motion.div
                 whileHover={{
                   scale: 1.06,
@@ -338,9 +338,9 @@ const itemm = {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25, ease: "easeInOut" }}
-                className="absolute top-30 left-0 w-full bg-white text-black shadow-xl  pl-12  z-40 flex flex-row justify-between min-h-110"
+                className="absolute top-30 left-0 w-full bg-white text-black shadow-xl  pl-12  z-40 flex flex-row justify-between items-stretch min-h-[440px]"
               >
-                <div className="grid grid-cols-4  flex-1 pt-6 pb-10">
+                <div className="grid grid-cols-4  flex-1 pt-6 pb-15">
                   {currentCategory.subcategory_groups?.map((group) => (
                     <div key={group.id} className="flex flex-col gap-5">
                       <p className="text-[14px] font-sans font-semibold text-gray-600">
@@ -391,15 +391,15 @@ const itemm = {
                   ))}
                 </div>
 
-                <div className="flex flex-row w-[50%] min-w-[380px] ">
-                  <div className="relative flex overflow-hidden w-1/2 h-full">
+                <div className="flex flex-row w-[50%] min-w-[380px] self-stretch">
+                  <div className="relative flex overflow-hidden flex-1 h-full">
                     <img
                       src={
                         currentCategory?.image_women_url ||
                         "https://via.placeholder.com/200x300"
                       }
                       alt="Shop Women"
-                      className="w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                     <div className="absolute bottom-6 left-0 right-0 flex justify-center">
@@ -412,14 +412,14 @@ const itemm = {
                       </Link>
                     </div>
                   </div>
-                  <div className="relative flex w-1/2 h-full overflow-hidden">
+                  <div className="relative flex flex-1 h-full overflow-hidden">
                     <img
                       src={
                         currentCategory?.image_men_url ||
                         "https://via.placeholder.com/200x300"
                       }
                       alt="Shop Men"
-                      className="w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                     <div className="absolute bottom-6 left-0 right-0 flex justify-center">

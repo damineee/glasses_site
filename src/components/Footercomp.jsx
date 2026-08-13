@@ -171,7 +171,7 @@ export default function Footercomp() {
             onSubmit={handleNewLetterSubmit}
             className="w-full md:w-[50%] lg:w-[38%] relative"
           >
-            <div className="relative flex flex-row items-center border border-gray-200 rounded-2xl p-1 focus-within:border-gray-500 transition-all hover:border-gray-500 pr-2 has-[input:not(:placeholder-shown)]:border-gray-500">
+            <div className="relative flex flex-row items-center border border-gray-200 rounded-2xl p-1  transition-all focus-within:border-gray-500 hover:border-gray-500 pr-2 has-[input:not(:placeholder-shown)]:border-gray-500">
               <input
                 type="email"
                 id="email_footer"
