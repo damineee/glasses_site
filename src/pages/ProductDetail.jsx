@@ -12,6 +12,8 @@ import antireflective from "../assets/anti-reflective.svg";
 import insurance from "../assets/insurance.svg";
 import replacement from "../assets/replacement.svg";
 import WidthGuideModal from "../components/WidthGuideModal";
+import FavoritesButton from "../components/FavoritesButton";
+
 export default function ProductDetail(){
     const {category,productSlug,colorSlug}=useParams();
 
@@ -53,10 +55,10 @@ export default function ProductDetail(){
 
                 if (images.length>0){
                   setActiveImage(images[0].image_url);
-                  setActiveImageType(images[0].image_type)
+                  setActiveImageType(images[0]?.image_type)
                 }else{
                   setActiveImage(variant?.main_image_url);
-                  setActiveImageType(images[0].image_type);
+                  setActiveImageType(images[0]?.image_type);
                 }
 
 
@@ -126,9 +128,9 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
 
 
     return (
-      <div className="mt-30 ">
+      <div className="xl:mt-30 mt-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 w-full">
-          <div className="flex lg:col-span-8 bg-[#faf7f3] h-[calc(100vh-200px)] md:h-[calc(100vh-280px)] lg:h-[calc(100vh-80px)] w-full   relative ">
+          <div className="flex lg:col-span-8 bg-[#faf7f3] h-[calc(100vh-340px)] sm:h-[calc(100vh-280px)] lg:h-[calc(100vh-80px)] w-full   relative ">
             <div className=" absolute inset-0 h-full w-full items-center justify-center ">
               <button className=" w-full h-full cursor-pointer bg-transparent">
                 <img
@@ -139,7 +141,7 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
                   className={`w-full h-full ${
                     isModel
                       ? "object-cover object-center"
-                      : "object-contain object-center pt-10 pr-10 pl-40 lg:pt-20 lg:pl-50 lg:pr-15 xl:pt-20 xl:pl-60 xl:pr-30 "
+                      : "object-contain object-center pt-10 pr-10 pl-36 lg:pt-20 lg:pl-50 lg:pr-15 xl:pt-20 xl:pl-60 xl:pr-30 "
                   }`}
                 />
               </button>
@@ -154,7 +156,7 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
                     spaceBetween={10}
                     mousewheel={true}
                     modules={[Mousewheel]}
-                    className="w-20 h-[350px]"
+                    className="w-15 h-[260px] sm:w-20 sm:h-[350px]"
                   >
                     {galleryImages.map((imgObj) => {
                       const isSelected = activeImage === imgObj.image_url;
@@ -177,7 +179,7 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
                             <img
                               src={imgObj.image_url}
                               alt={imgObj.image_type}
-                              className={`w-full h-full  ${imageType ? "object-contain  scale-135 blur-[0.2px]" : "object-contain  scale-90 "}`}
+                              className={`w-full h-full  ${imageType ? "object-contain  scale-135 blur-[0.1px]" : "object-contain  scale-90 "}`}
                             />
                           </button>
                         </SwiperSlide>
@@ -258,6 +260,11 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
               <p className="text-[#096258] font-semibold text-[17px] pt-[2px]">
                 20% off extra Rx pairs
               </p>
+              <FavoritesButton
+                className="absolute right-2 !bg-transparent  !shadow-none"
+                variantId={selectedVariant.id}
+                sizeSlug={frameWidth}
+              />
               <div className="absolute  right-2 bottom-8">
                 <RatingStars
                   rating={product.rating}
@@ -328,12 +335,12 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
                 </div>
               </div>
 
-              <div className="flex gap-2.5 py-2">
+              <div className="flex flex-wrap gap-2.5 py-2">
                 {selectedVariant?.product_sizes?.map((size) => (
                   <button
                     key={size.id}
                     onClick={() => handleWidthChange(size.size_name_slug)}
-                    className={`md:w-35 lg:w-23 h-11 text-[14px] font-bold text-black border rounded-lg transition-all cursor-pointer items-center justify-center ${
+                    className={`sm:w-34 w-20 xl:w-25 h-11 text-[14px] font-bold text-black border rounded-lg transition-all cursor-pointer items-center justify-center ${
                       frameWidth === size.size_name_slug
                         ? "  border-black"
                         : "  border-gray-300 hover:border-gray-900"
@@ -348,7 +355,6 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
             <div className="flex flex-col mt-6 gap-2">
               <Link
                 to=""
-                
                 className=" flex bg-[#1050D0] rounded-4xl text-white w-full h-12 items-center justify-center transition-color duration-200 hover:bg-blue-800 
                      "
               >
@@ -461,12 +467,13 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
             </div>
           </div>
         </div>
-                <WidthGuideModal 
-                isOpen={isOpenWidthMenu} 
-                onClose={()=>setisOpenWidthMenu(false)}
-                  product={product}
-                  selectedVariant={selectedVariant}
-                  frameWidth={frameWidth}/>
+        <WidthGuideModal
+          isOpen={isOpenWidthMenu}
+          onClose={() => setisOpenWidthMenu(false)}
+          product={product}
+          selectedVariant={selectedVariant}
+          frameWidth={frameWidth}
+        />
       </div>
     );
 }

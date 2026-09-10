@@ -10,6 +10,15 @@ export default function WidthGuideModal({isOpen,onClose,product,selectedVariant,
     const [showOtherMeasurements,setShowOtherMeasurements]=useState(false);
     const [showMeasurementsMeaning,setShowMeasurementsMeaning]=useState(false);
     
+  const [isMobile,setIsMobile]=useState(false);
+
+
+  useEffect(()=>{
+    const handleResize=()=>setIsMobile(window.innerWidth<640);
+    handleResize();
+    window.addEventListener("resize",handleResize);
+    return ()=>window.removeEventListener("resize",handleResize);
+  },[]);
 
     useEffect(() => {
       if (!isOpen) {
@@ -19,6 +28,15 @@ export default function WidthGuideModal({isOpen,onClose,product,selectedVariant,
         setShowMeasurementsMeaning(false);
       }
     }, [isOpen, showOtherMeasurements]);
+    const modalVariants = {
+      initial: isMobile
+        ? { y: "100%", x: 0, opacity: 1 }
+        : { x: "100%", y: 0, opacity: 0 },
+      animate: { y: 0, x: 0, opacity: 1 },
+      exit: isMobile
+        ? { y: "100%", x: 0, opacity: 1 }
+        : { x: "100%", y: 0, opacity: 0 },
+    };
     return (
       <AnimatePresence>
         {isOpen && (
@@ -33,11 +51,31 @@ export default function WidthGuideModal({isOpen,onClose,product,selectedVariant,
             />
 
             <motion.div
-              initial={{ x: "100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "100%", opacity: 0 }}
+              variants={modalVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="flex flex-col fixed right-6 top-6 bottom-6 w-full max-w-[37rem] bg-white z-50 overflow-hidden  shadow-2xl border border-gray-200 rounded-3xl"
+              className=" flex flex-col fixed
+  bottom-0 left-0 right-0
+  h-[95vh]
+  w-full
+  bg-white
+  z-50
+  overflow-hidden
+  rounded-t-3xl rounded-b-none
+  shadow-2xl
+  border border-gray-200
+
+  sm:top-6
+  sm:bottom-6
+  sm:left-auto
+  sm:right-6
+   sm:h-[calc(100dvh-7rem)]
+   2xl:h-[calc(100vh-3rem)]
+  sm:w-full
+  sm:max-w-[37rem]
+  sm:rounded-3xl"
             >
               <div className="flex justify-between items-start pl-7 pr-5.5 py-6 border-b border-gray-200">
                 <div className="">
@@ -66,7 +104,7 @@ export default function WidthGuideModal({isOpen,onClose,product,selectedVariant,
                 </button>
               </div>
 
-              <div className="flex-1  px-7 py-4 overflow-y-auto bg-[#FCFBF9]">
+              <div className="flex-1  px-7 py-4 pb-24 sm:pb-8 overflow-y-auto bg-[#FCFBF9]">
                 <div className="flex flex-col w-full  border-gray-200 border rounded-xl overflow-hidden">
                   <div className="flex flex-row  gap-6.5 px-6 pt-6 pb-7 items-start">
                     <img

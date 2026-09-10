@@ -1,4 +1,4 @@
-import { useState } from 'react';
+
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
@@ -8,16 +8,22 @@ import Footercomp from "./components/Footercomp";
 import ScrollToTop from "./components/ScrollToTop";
 import History from './pages/History';
 import SearchBar from './pages/SearchBar';
+import Register from './pages/Register';
+import Singin from './pages/Signin';
+import UserProfile from './pages/UserProfile';
+import Favorites from './pages/Favorites';
 
 
   function AppContent() {
   const location = useLocation();
-  const hiddenFooter = location.pathname === "/search";
-  const hiddenNavbar = location.pathname === "/search";
+ const hideLayoutRoutes = ["/login", "/register", "/search"];
+
+
+ const shouldHideLayout = hideLayoutRoutes.includes(location.pathname);
   return (
     <>
       <ScrollToTop />
-      {!hiddenNavbar && <Navbar />}
+      {!shouldHideLayout && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<SearchBar />} />
@@ -28,9 +34,13 @@ import SearchBar from './pages/SearchBar';
 
         <Route path="/:categorySlug" element={<CategoryProducts />} />
         <Route path="/:categorySlug/:subPath" element={<CategoryProducts />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<UserProfile />} />
+        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/login" element={<Singin />} />
         <Route path="/history" element={<History />} />
       </Routes>
-      {!hiddenFooter && <Footercomp /> }
+      {!shouldHideLayout && <Footercomp />}
     </>
   );
 }

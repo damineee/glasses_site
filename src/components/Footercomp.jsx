@@ -233,7 +233,7 @@ export default function Footercomp() {
       </div>
 
       <div className=" border-gray-300 border-t border-b  w-full ">
-        <div className="grid grid-cols-1 md:grid-cols-6  pt-10 pb-5 px-14 ">
+        <div className="grid grid-cols-1 sm:grid-cols-6 gap-y-10 sm:gap-y-0  pt-10 pb-5 px-14 ">
           {/* 1 */}
           <div className="space-y-3.5">
             <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
@@ -253,7 +253,7 @@ export default function Footercomp() {
             </ul>
           </div>
           {/* 2 */}
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col sm:gap-10 gap-5 ">
             <div className="space-y-3.5">
               <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
                 {footerLinks[1].title}
@@ -310,7 +310,7 @@ export default function Footercomp() {
           </div>
           {/* 3 */}
 
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col sm:gap-10 gap-5">
             <div className="space-y-3.5">
               <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
                 {footerLinks[2].title}
@@ -387,8 +387,10 @@ export default function Footercomp() {
 
           {/* 5 */}
           {/* <div className="flex flex-col h-[96%] w-[1px] bg-gray-200  my-auto" /> */}
-          <div className="flex flex-col col-span-2 justify-center items-center  border-gray-200 border-l my-3">
-            <h3 className="text-[16px] font-semibold text-black">Need a hand?</h3>
+          <div className="flex flex-col col-span-2 justify-center items-center  border-gray-200 sm:border-l  my-3">
+            <h3 className="text-[16px] font-semibold text-black">
+              Need a hand?
+            </h3>
             <p className="text-[14px] text-gray-700 font-medium text-center pt-2">
               We’re here to help. See frequently
               <br />
@@ -486,13 +488,17 @@ export default function Footercomp() {
           </div>
         </div>
       </div>
-<div className="flex flex-col lg:flex-row flex-wrap  justify-start max-h-60 lg:justify-end gap-x-4 gap-y-4 text-gray-600 px-5  py-8 lg:px-13">
-  {legalLinks.map((item)=>(
-    <Link key={item.name} to={item.path} className="text-[12px] font-medium hover:text-gray-900">
-      {item.name}
-    </Link>
-  ))}
-</div>
+      <div className="flex flex-col lg:flex-row flex-wrap  justify-start max-h-60 lg:justify-end gap-x-4 gap-y-4 text-gray-600 px-5  py-8 lg:px-13">
+        {legalLinks.map((item) => (
+          <Link
+            key={item.name}
+            to={item.path}
+            className="text-[12px] font-medium hover:text-gray-900"
+          >
+            {item.name}
+          </Link>
+        ))}
+      </div>
 
       <img src={footerimg} alt="Footer_img" className="w-full  object-cover" />
     </footer>

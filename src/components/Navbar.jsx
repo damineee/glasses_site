@@ -1,129 +1,165 @@
 
-import { useState,useEffect, useEffectEvent } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { IoSearch, IoHeartOutline, IoCartOutline } from "react-icons/io5";
-import { FaGlasses } from "react-icons/fa6";
-import glases_svg from "../assets/glases_nav.svg";
-import contact_svg from "../assets/contact_nav.svg";
-import { motion,AnimatePresence } from "framer-motion";
-import { supabase } from '../utils/supabase';
-import FadeIn from "./FadeIn";
-import { div } from "framer-motion/client";
+  import { useState,useEffect, useEffectEvent, useRef } from "react";
+  import { Link, useLocation } from "react-router-dom";
+  import { IoSearch, IoHeartOutline, IoCartOutline } from "react-icons/io5";
+  import { FaGlasses } from "react-icons/fa6";
+  import glases_svg from "../assets/glases_nav.svg";
+  import contact_svg from "../assets/contact_nav.svg";
+  import { motion,AnimatePresence } from "framer-motion";
+  import { supabase } from '../utils/supabase';
+  import FadeIn from "./FadeIn";
 
+  import MobileNavbar from "./MobileNavbar";
+  import DrawerMenu from "./DrawerMenu";
+import { useAuth } from "../contexts/AuthContext";
+import useClikOutside from "../utils/hooks/useClickOutside";
+import { useFavorites } from "../contexts/FavoritesContext";
 
-function getSubcategoryUrl(sub, slug) {
-  if (!sub.page_slug) return `/${slug}`;
-  if (sub.page_slug === "page") return `/${slug}/${sub.filter_query}`;
-  if (sub.page_slug === "color")return `/${slug}?colors=${sub.filter_query}`;
-  if (sub.page_slug==='merch') return `/${slug}?merch=${sub.filter_query}`;
-  if (sub.page_slug==='low') return `/${sub.filter_query}`;
-  if (sub.page_slug==='price') return `/${slug}?prices=${sub.filter_query}`;
-}
+  function getSubcategoryUrl(sub, slug) {
+    if (!sub.page_slug) return `/${slug}`;
+    if (sub.page_slug === "page") return `/${slug}/${sub.filter_query}`;
+    if (sub.page_slug === "color")return `/${slug}?colors=${sub.filter_query}`;
+    if (sub.page_slug==='merch') return `/${slug}?merch=${sub.filter_query}`;
+    if (sub.page_slug==='low') return `/${sub.filter_query}`;
+    if (sub.page_slug==='price') return `/${slug}?prices=${sub.filter_query}`;
+  }
 
-export default function Navbar(){
-    const [isScrolled,setIsScrolled]=useState(false);
-    const [isHovered,setIsHovered]=useState(false);
+  export default function Navbar({ isHidden }) {
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
     const [dbCategories, setDbCategories] = useState([]);
     const [activeMenuSlug, setActiveMenuSlug] = useState(null);
+    const [isDrawerOpen,setIsDrawerOpen]=useState(false);
+    const {user,signOut}=useAuth();
+    const [showUserMenu,setShowUserMenu]=useState(false);
+    const location = useLocation();
+    const userRef=useRef();
+    const {favorites}=useFavorites();
 
-    const location=useLocation();
 
+    useEffect(()=>{
+      setIsDrawerOpen(false);
+      setShowUserMenu(false);
+    },[location.pathname]);
     const isProductDetailPage =
       location.pathname.split("/").filter(Boolean).length >= 1;
 
+    const currentCategory = dbCategories.find(
+      (cat) => cat.slug === activeMenuSlug,
+    );
 
-  const currentCategory = dbCategories.find((cat) => cat.slug === activeMenuSlug);
+    const displayName =
+      user?.user_metadata?.username || user?.email?.split("@")[0] || "User";
 
-
-  useEffect(()=>{
-    setActiveMenuSlug(null);
-  },[location.pathname]);
-
-
-  useEffect(()=>{
-    const fetchNavBarData=async()=>{
-      const { data, error } = await supabase
-        .from("categories")
-        .select(
-          `id,name,slug,image_women_url, image_men_url,women_text, men_text,women_link_url,men_link_url,
-        subcategory_groups(
-        id,group_name,
-        subcategories(
-        id,name,filter_query,
-        is_new_badge,display_order,page_slug))`,
-        )
-        .order("display_order", { ascending: true })
-        .order("display_order", {
-          foreignTable: "subcategory_groups.subcategories",
-          ascending: true,
-        });
-
-      if (!error && data){
-        setDbCategories(data);
-      }else{
-        console.error("Eroare la incarcarea meniului:",error);
-      }
-    };
-    fetchNavBarData();
-  },[]);
-
-
-    useEffect(()=>{
-      if(activeMenuSlug){
-        document.body.style.overflow="hidden";
-      }else{
-        document.body.style.overflow="unset";
-      }
-      return()=>{
-        document.body.style.overflow="unset";
+      const handleSignOut=async()=>{
+        setShowUserMenu(false);
+        await signOut();
       };
-    },[activeMenuSlug]);
 
-    useEffect(()=>{
-        const handleScroll=()=>{
-            if (window.scrollY>20){
-                setIsScrolled(true);
-            }else{
-                setIsScrolled(false);
-            }
-        };
-        window.addEventListener('scroll',handleScroll);
-        return ()=> window.removeEventListener('scroll',handleScroll);
-    },[]);
+      useClikOutside(userRef,()=>{
+        if(showUserMenu) setShowUserMenu(false);
+      });
 
-    const isMenuWhite = isScrolled || isHovered ||activeMenuSlug!==null || isProductDetailPage;
+    useEffect(() => {
+      setActiveMenuSlug(null);
+    }, [location.pathname]);
 
-    
+    useEffect(() => {
+      const fetchNavBarData = async () => {
+        const { data, error } = await supabase
+          .from("categories")
+          .select(
+            `id,name,slug,image_women_url, image_men_url,women_text, men_text,women_link_url,men_link_url,
+          subcategory_groups(
+          id,group_name,
+          subcategories(
+          id,name,filter_query,
+          is_new_badge,display_order,page_slug))`,
+          )
+          .order("display_order", { ascending: true })
+          .order("display_order", {
+            foreignTable: "subcategory_groups.subcategories",
+            ascending: true,
+          });
 
+        if (!error && data) {
+          setDbCategories(data);
+        } else {
+          console.error("Eroare la incarcarea meniului:", error);
+        }
+      };
+      fetchNavBarData();
+    }, []);
 
-    const handleCategoryClick=(slug,e)=>{
+    useEffect(() => {
+      if (activeMenuSlug || isDrawerOpen) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "unset";
+      }
+      return () => {
+        document.body.style.overflow = "unset";
+      };
+    }, [activeMenuSlug,isDrawerOpen]);
+
+    useEffect(() => {
+      const handleScroll = () => {
+        if (window.scrollY > 20) {
+          setIsScrolled(true);
+          setShowUserMenu(false);
+        } else {
+          setIsScrolled(false);
+        }
+      };
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    const isMenuWhite =
+      isScrolled || isHovered || activeMenuSlug !== null || isProductDetailPage;
+
+    const handleCategoryClick = (slug, e) => {
       e.preventDefault();
-      if(activeMenuSlug===slug){
+      if (activeMenuSlug === slug) {
         setActiveMenuSlug(null);
-      }else{
+      } else {
         setActiveMenuSlug(slug);
       }
     };
 
-const container = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.20,
-    },
-  },
-};
+    const container = {
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: {
+          staggerChildren: 0.2,
+        },
+      },
+    };
 
-const itemm = {
-  hidden: { opacity: 0, y: -10 },
-  visible: { opacity: 1, y: 0 },
-};
-
+    const itemm = {
+      hidden: { opacity: 0, y: -10 },
+      visible: { opacity: 1, y: 0 },
+    };
 
     return (
-      <header className="fixed top-0 left-0 w-full z-50 ">
-        <div className="flex flex-row w-full h-10 bg-[#072369] justify-between px-12 items-center text-white">
+      <header
+        className={`fixed top-0 left-0 w-full z-50 ${isHidden ? "hidden" : ""}`}
+      >
+        <div className="flex xl:hidden">
+          <MobileNavbar
+            dbCategories={dbCategories}
+            onOpenMenu={() => setIsDrawerOpen(true)}
+          />
+        </div>
+
+        <DrawerMenu
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          dbCategories={dbCategories}
+          className="flex xl:hidden"
+        />
+        <div className=" flex-row w-full h-10 bg-[#072369] justify-between px-12 items-center text-white hidden xl:flex">
           <FadeIn>
             <Link
               to="/eyeglasses"
@@ -159,7 +195,7 @@ const itemm = {
         <div
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`w-full h-16 flex flex-row py-10 px-12 justify-between items-center z-50 border-b relative transition-colors  duration-300  ${
+          className={`w-full h-16  flex-row py-10 px-12 justify-between items-center z-50 hidden xl:flex  border-b relative transition-colors  duration-300  ${
             isMenuWhite
               ? "bg-white border-gray-100 "
               : "bg-transparent border-transparent"
@@ -209,36 +245,120 @@ const itemm = {
             transition={{ duration: 1.2, ease: "easeInOut" }}
             className="items-center justify-center flex flex-row gap-5"
           >
-            <Link to="/">
-              <motion.div
-                whileHover={{
-                  scale: 1.03,
-                  transition: { duration: 0.2, ease: "easeInOut" },
-                }}
-                whileTap={{
-                  scale: 0.9,
-                  y: 1,
-                  transition: { duration: 0.3, ease: "easeInOut" },
-                }}
-                className="border h-12 w-31 rounded-4xl items-center justify-center flex gap-2    hover:border-gray-500  hover:opacity-90 overflow-hidden  hover:shadow-lg hover:shadow-[#1050D0]/30"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="21"
-                  height="21"
-                  fill="currentColor"
-                  class="bi bi-person-circle"
-                  viewBox="0 0 16 16"
+            {user ? (
+              <div className="items-center relative flex" ref={userRef}>
+                <button
+                  className="focus:outline-none cursor-pointer"
+                  onClick={() => setShowUserMenu((prev) => !prev)}
                 >
-                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                  <path
-                    fill-rule="evenodd"
-                    d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                  />
-                </svg>
-                <p className="font-semibold">Sign in</p>
-              </motion.div>
-            </Link>
+                  <motion.div
+                    whileHover={{
+                      scale: 1.03,
+                      transition: { duration: 0.2, ease: "easeInOut" },
+                    }}
+                    whileTap={{
+                      scale: 0.9,
+                      y: 1,
+                      transition: { duration: 0.3, ease: "easeInOut" },
+                    }}
+                    className={`border h-12 w-31 rounded-4xl items-center justify-center flex gap-2  border-black   hover:border-gray-500  hover:opacity-90 overflow-hidden  hover:shadow-lg hover:shadow-[#1050D0]/30 ${showUserMenu ? "text-blue-700" : "text-black"}`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="w-5.5 h-5.5"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+                      <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+                    </svg>
+
+                    <p className="font-semibold truncate">{displayName}</p>
+                  </motion.div>
+                </button>
+                <AnimatePresence>
+                  {showUserMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-16 left-1/2 -translate-x-1/2 z-30 w-85 bg-white rounded-xl shadow-xl border border-gray-100 p-4 text-gray-800"
+                    >
+                      <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-white border-t border-l border-gray-100 rotate-45" />
+                      <div className="flex flex-col gap-2">
+                        <div className="border-b border-gray-100 pb-2">
+                          <p className="text-[12px] text-gray-400 font-medium mb-0.5">
+                            Logged in as
+                          </p>
+                          <p className="text-[17px] font-bold text-gray-900 truncate">
+                            {displayName}
+                          </p>
+                          <p className="text-[14px] text-gray-500 truncate">
+                            {user.email}
+                          </p>
+                        </div>
+
+                        <button
+                          onClick={handleSignOut}
+                          className="w-full mt-1 flex items-center justify-center gap-2 py-2 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                          </svg>
+                          Sign out
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <Link to="/login">
+                <motion.div
+                  whileHover={{
+                    scale: 1.03,
+                    transition: { duration: 0.2, ease: "easeInOut" },
+                  }}
+                  whileTap={{
+                    scale: 0.9,
+                    y: 1,
+                    transition: { duration: 0.3, ease: "easeInOut" },
+                  }}
+                  className="border h-12 w-31 rounded-4xl items-center justify-center flex gap-2    hover:border-gray-500  hover:opacity-90 overflow-hidden  hover:shadow-lg hover:shadow-[#1050D0]/30"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="21"
+                    height="21"
+                    fill="currentColor"
+                    class="bi bi-person-circle"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                    <path
+                      fill-rule="evenodd"
+                      d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
+                    />
+                  </svg>
+                  <p className="font-semibold">Sign in</p>
+                </motion.div>
+              </Link>
+            )}
 
             {/* {SearchBar} */}
             <Link to="/search" className="">
@@ -268,7 +388,7 @@ const itemm = {
               </motion.div>
             </Link>
             {/* {Inima} */}
-            <Link className="">
+            <Link to="/favorites" className="">
               <motion.div
                 whileHover={{
                   scale: 1.06,
@@ -291,12 +411,14 @@ const itemm = {
                 >
                   <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
                 </svg>
-
-                <div className="absolute bottom-3 left-3 h-[15px] rounded-full w-[15px] bg-[#1050d0] flex items-center justify-center">
+                  {favorites.length>0 && (
+                    <span className="absolute bottom-3 left-3 h-[15px] rounded-full w-[15px] bg-[#1050d0] flex items-center justify-center">
                   <p className="text-white text-[11px] font-semibold font-[Arial]">
-                    1
+                    {favorites.length}
                   </p>
-                </div>
+                </span>
+                  )}
+                
               </motion.div>
             </Link>
 
@@ -449,4 +571,4 @@ const itemm = {
         </AnimatePresence>
       </header>
     );
-}
+  }

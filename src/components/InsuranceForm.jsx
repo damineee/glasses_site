@@ -22,7 +22,7 @@ import { div } from "framer-motion/client";
 
 
     return (
-      <div className="w-45 h-10">
+      <div className="sm:w-45 sm:h-10 w-25 h-5 ">
         <img
           src={images[currentIndex]}
           alt={`Warby Parker Slide ${currentIndex + 1}`}
@@ -180,14 +180,14 @@ const renderInput=(name,label,type="text",maxLength,colSpan="col-span-4")=>{
 }
 
     return (
-      <div className="flex flex-col mx-4 sm:mx-5 my-8 lg:mx-12 lg:my-15 bg-[#061f5e] items-center  py-10 rounded-2xl  justify-center  ">
-        <div className="flex flex-col w-full max-w-[90%]  md:max-w-[670px] xl:max-w-[900px] mx-auto items-center justify-center gap-3 md:gap-4">
-          <div className="flex flex-row items-center justify-center gap-3">
-            <div className="w-45">
+      <div className="flex flex-col mx-4 sm:mx-5 my-8 lg:mx-12 lg:my-15 bg-[#061f5e] items-center  py-10 rounded-2xl  justify-center overflow-hidden ">
+        <div className="flex flex-col w-full max-w-[90%] px-3 sm:px-0  md:max-w-[670px] xl:max-w-[900px] mx-auto items-center justify-center gap-3 md:gap-4">
+          <div className="flex flex-row items-center justify-center gap-3  w-full mx-auto">
+            <div className="sm:w-45 w-33 ">
               <img
                 src={warby}
                 alt="warby"
-                className="max-w-full max-h-full object-contain"
+                className="w-full h-auto object-contain"
               />
             </div>
 
@@ -209,7 +209,7 @@ const renderInput=(name,label,type="text",maxLength,colSpan="col-span-4")=>{
             noValidate
             className=" w-full mt-2"
           >
-            <div className="grid grid-col-1 space-y-2 md:grid-cols-3 xl:grid-cols-12 gap-3 xl:gap-4  mb-4 md:mb-10">
+            <div className="grid grid-cols-1 space-y-2 md:grid-cols-3 xl:grid-cols-12 gap-3 xl:gap-4  mb-4 md:mb-10">
               {renderInput(
                 "firstName",
                 "First name",

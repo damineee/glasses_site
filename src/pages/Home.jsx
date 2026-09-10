@@ -79,11 +79,18 @@ export default function Home() {
   const isInView = useInView(ref, { amount: 0.3 });
   return (
     <div className="w-full pt-9 overflow-hidden">
-      <section
-        className="relative w-full h-[calc(100vh-20px)] bg-cover bg-center bg-no-repeat flex flex-col justify-center items-start px-12"
-        style={{ backgroundImage: `url(${hero_glases})` }}
-      >
-        <div className="text-[115px] z-3 font-extralight font-serif leading-30 tracking-tighter">
+      <section className="relative w-full sm:h-[calc(100vh-20px)] h-[calc(100vh-110px)]  flex flex-col sm:justify-center justify-end items-start sm:px-12 px-8 sm:pb-0  pb-5">
+        <div className="absolute inset-0 ">
+          <img
+            src={hero_glases}
+            alt="main_image"
+            className="w-full h-full object-cover    object-center"
+          />
+        </div>
+        <div className="flex  sm:hidden text-[45px] z-3 font-extralight font-serif ">
+          <p>SEE SUMMER BETTER</p>
+        </div>
+        <div className="sm:block hidden text-[115px] z-3 font-extralight font-serif leading-30 tracking-tighter">
           <motion.p
             initial={{ opacity: 0, x: -150 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -110,7 +117,52 @@ export default function Home() {
           </motion.p>
         </div>
 
-        <div className="flex flex-row pt-7 gap-3 z-3">
+        <div className="flex flex-wrap justify-center w-full items-center sm:hidden  pt-4 gap-x-5 gap-y-1.5 z-3">
+          <motion.button
+            whileHover={{
+              scale: 1.03,
+              transition: { duration: 0.2, ease: "linear" },
+            }}
+            whileTap={{
+              scale: 0.9,
+              y: 1,
+              transition: { duration: 0.3, ease: "linear" },
+            }}
+            className="flex  h-10 max-w-40 min-w-34 rounded-4xl bg-[#1050D0] overflow-hidden  hover:bg-[#0b3fa3]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
+          >
+            <Link
+              to="/"
+              className="h-full w-full flex items-center justify-center"
+            >
+              <p className="text-white  text-[13px] font-semibold font-sans">
+                Start with a quiz
+              </p>
+            </Link>
+          </motion.button>
+
+          <motion.button
+            whileHover={{
+              scale: 1.03,
+              transition: { duration: 0.3, ease: "easeInOut" },
+            }}
+            whileTap={{
+              scale: 0.9,
+              y: 1,
+              transition: { duration: 0.2, ease: "easeInOut" },
+            }}
+            className="flex  h-10 max-w-40 min-w-34   rounded-4xl bg-[#072369] overflow-hidden  hover:bg-[#102b6d]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
+          >
+            <Link
+              to="/eyeglasses"
+              className="h-full w-full flex items-center justify-center"
+            >
+              <p className="text-white  text-[13px] font-semibold font-sans">
+                Shop eyeglasses
+              </p>
+            </Link>
+          </motion.button>
+        </div>
+        <div className="hidden sm:flex flex-row pt-7 gap-3 z-3">
           <motion.button
             initial={{ opacity: 0, x: -150 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -128,13 +180,13 @@ export default function Home() {
               y: 1,
               transition: { duration: 0.3, ease: "linear" },
             }}
-            className="flex h-12 w-43 rounded-4xl bg-[#1050D0] overflow-hidden  hover:bg-[#0b3fa3]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
+            className="flex sm:h-12 sm:w-43  rounded-4xl bg-[#1050D0] overflow-hidden  hover:bg-[#0b3fa3]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
           >
             <Link
               to="/"
               className="h-full w-full flex items-center justify-center"
             >
-              <p className="text-white font-semibold font-sans">
+              <p className="text-white sm:text-[16px]  font-semibold font-sans">
                 Start with a quiz
               </p>
             </Link>
@@ -157,13 +209,13 @@ export default function Home() {
               y: 1,
               transition: { duration: 0.2, ease: "easeInOut" },
             }}
-            className="flex h-12 w-43 rounded-4xl bg-[#072369] overflow-hidden  hover:bg-[#102b6d]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
+            className="flex sm:h-12 sm:w-43   rounded-4xl bg-[#072369] overflow-hidden  hover:bg-[#102b6d]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
           >
             <Link
               to="/eyeglasses"
               className="h-full w-full flex items-center justify-center"
             >
-              <p className="text-white font-semibold font-sans">
+              <p className="text-white sm:text-[16px]  font-semibold font-sans">
                 Shop eyeglasses
               </p>
             </Link>
@@ -179,7 +231,7 @@ export default function Home() {
         >
           <Link
             to="/"
-            className="w-full h-full flex flex-row gap-2 items-center hover:opacity-80 transition-opacity"
+            className="w-full h-full hidden sm:flex flex-row gap-2 items-center hover:opacity-80 transition-opacity"
           >
             <p className="text-white font-sans text-[16px] font-semibold">
               Shop Summer
@@ -211,7 +263,7 @@ export default function Home() {
             duration: 1.2,
             ease: "easeInOut",
           }}
-          className="absolute z-3 bottom-3 left-0 px-12 flex flex-row justify-between items-center w-full text-[17px] font-semibold font-sans text-white"
+          className="absolute z-3 bottom-3 left-0 px-12 hidden sm:flex flex-row justify-between items-center w-full text-[17px] font-semibold font-sans text-white"
         >
           <div className="">
             <Link
@@ -241,38 +293,46 @@ export default function Home() {
         <div className="absolute z-1 inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
       </section>
 
-      <section className="flex flex-row w-full h-235">
-        <Link to="/" className="w-1/2  relative group overflow-hidden">
+      <section className="flex sm:flex-row flex-col w-full sm:h-200 xl:h-235 h-190 ">
+        <Link
+          to="/sunglasses"
+          className="sm:w-1/2 flex-1 w-full  relative group overflow-hidden"
+        >
           <img
             src={boaz}
             alt="Boaz shop"
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-103"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          <div className="absolute left-12 bottom-17 flex flex-col ">
-            <p className="text-3xl font-normal font-serif text-white pb-7">
+          <div className="absolute sm:left-12 sm:bottom-17 bottom-8 left-7 flex flex-col ">
+            <p className="sm:text-3xl text-[27px] font-normal font-serif text-white pb-7">
               The sunglasses of the season
             </p>
-            <div className="flex bg-white h-12 w-33 rounded-4xl items-center justify-center shadow-sm">
-              <p className="font-sans font-semibold text-[16px] ">Shop Boaz</p>
+            <div className="flex bg-white h-12 w-44  rounded-4xl items-center justify-center shadow-sm">
+              <p className="font-sans font-semibold sm:text-[16px] text-[15px] ">
+                Shop Sunglasses
+              </p>
             </div>
           </div>
         </Link>
 
-        <Link to="/" className="group w-1/2  relative overflow-hidden">
+        <Link
+          to="/"
+          className="group sm:w-1/2 flex-1 w-full  relative overflow-hidden"
+        >
           <img
             src={men_aero}
             alt="Sport glasses"
             className="w-full h-full object-cover object-top  transition-transform duration-300 group-hover:scale-103"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          <div className="absolute left-12 bottom-17 flex flex-col ">
-            <p className="text-3xl font-medium font-serif text-white pb-7">
+          <div className="absolute sm:left-12 sm:bottom-17 bottom-8 left-7 flex flex-col ">
+            <p className="sm:text-3xl text-[27px] font-medium font-serif text-white pb-7">
               A new level of lightweight
             </p>
 
             <div className="flex bg-white h-12 w-44 rounded-4xl items-center justify-center shadow-sm">
-              <p className="font-sans font-semibold text-[16px]">
+              <p className="font-sans font-semibold sm:text-[16px] text-[15px] ">
                 Shop Aero Series
               </p>
             </div>
@@ -284,7 +344,7 @@ export default function Home() {
         <NewArrivalsSwiper />
       </div>
 
-      <div className="flex flex-col px-15 pt-8 items-center justify-center">
+      <div className="flex flex-col sm:px-15 px-6 sm:pt-8 pt-5 items-center justify-center">
         <h1 className="text-[30px] font-serif">
           Four ways to use your vision benefits
         </h1>
@@ -313,7 +373,7 @@ export default function Home() {
         </div>
       </div>
 
-    <InsuranceForm />
+      <InsuranceForm />
     </div>
   );
 }
