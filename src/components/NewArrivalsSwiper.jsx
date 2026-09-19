@@ -1,14 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation,Pagination } from "swiper/modules";
 import { supabase } from "../utils/supabase";
 import {motion} from "framer-motion";
 import "swiper/css";
 import "swiper/css/navigation";
 import FavoritesButton from "./FavoritesButton";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import LensConfigurator from "./LensConfigurator";
 
-
+import { useCart } from "../contexts/CartContext";
 function ColorSwatch({ v, isActive, onClick }) {
   const [hovered, setHovered] = useState(false);
 
@@ -50,7 +53,7 @@ function ProductCardSkeleton(){
           <div className="w-8 h-5 rounded bg-gray-200" />
         </div>
 
-        {/* Button */}
+        
         <div className="absolute bottom-6 left-6 right-6 h-12 rounded-full bg-gray-200" />
       </div>
     </div>
@@ -59,12 +62,19 @@ function ProductCardSkeleton(){
 
 
 
-function ProductCard({ product, initialVariant, selectedWidths }) {
+function ProductCard({
+  product,
+  initialVariant,
+  selectedWidths,
+  onOpenConfigurator,
+}) {
   const [hovered, setHovered] = useState(false);
   const [activeVariant, setActiveVariant] = useState(
-    initialVariant || product?.product_variants?.[0]
+    initialVariant || product?.product_variants?.[0],
   );
 
+
+  const frameWidth = selectedWidths || product?.frame_width_slug || "medium";
   return (
     <div
       className="flex flex-col "
@@ -72,7 +82,6 @@ function ProductCard({ product, initialVariant, selectedWidths }) {
       onMouseLeave={() => setHovered(false)}
     >
       <div className="relative overflow-hidden rounded-xs bg-[#FCFBF9]">
-        {/* Pasăm ID-ul variantei curente active */}
         <FavoritesButton
           variantId={activeVariant?.id}
           sizeSlug={selectedWidths || "medium"}
@@ -111,10 +120,16 @@ function ProductCard({ product, initialVariant, selectedWidths }) {
           ))}
         </div>
 
-        <Link
-          to=""
-          onClick={(e) => e.stopPropagation()}
-          className={`flex absolute bottom-6 left-6 right-6 z-10 border w-auto h-12 rounded-4xl items-center justify-center transition-color duration-200 hover:bg-[#1050D0] hover:border-transparent hover:text-white ${
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+           onOpenConfigurator({
+             product,
+             variant: activeVariant,
+             frameWidth,
+           });
+          }}
+          className={`flex absolute cursor-pointer bottom-6 left-6 right-6 z-10 border w-auto h-12 rounded-4xl items-center justify-center transition-color duration-200 hover:bg-[#1050D0] hover:border-transparent hover:text-white ${
             activeVariant?.hover_image_url && hovered
               ? "text-white border-white"
               : "text-black border-gray-700"
@@ -123,10 +138,10 @@ function ProductCard({ product, initialVariant, selectedWidths }) {
           <p className="text-[16px] font-sans font-semibold">
             Select lenses and buy
           </p>
-        </Link>
+        </button>
 
         <Link
-          to={`/${product?.category}/${product?.slug}/${activeVariant?.color_name_slug}?w=${product?.frame_width_slug}`}
+          to={`/${product?.category}/${product?.slug}/${activeVariant?.color_name_slug}?w=${frameWidth}`}
           className="block"
         >
           <div className="relative aspect-square">
@@ -185,11 +200,12 @@ export default function NewArrivalsSwiper(){
     const [products,setProducts]=useState([]);
     const [loading,setLoading]=useState(true);
 
-
+const [selectedProductForConfig, setSelectedProductForConfig] = useState(null);
     const prevRef =useRef(null);
     const nextRef=useRef(null);
     const swiperRef=useRef(null);
-
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
     useEffect(()=>{
         async function fetchNewArrivals() {
             const { data, error } = await supabase
@@ -284,7 +300,10 @@ export default function NewArrivalsSwiper(){
         </div>
 
         <Swiper
-          modules={[Navigation]}
+          modules={[Navigation, Pagination]}
+          simulateTouch={true}
+          pagination={{ clickable: true }}
+          className="!overflow-visible"
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
             swiper.params.navigation.prevEl = prevRef.current;
@@ -299,13 +318,13 @@ export default function NewArrivalsSwiper(){
           breakpoints={{
             640: {
               slidesPerView: 1,
-              slidesOffsetBefore: 30,
-              slidesOffsetAfter: 30,
+              slidesOffsetBefore: 42,
+              slidesOffsetAfter: 42,
             },
             768: {
               slidesPerView: 2,
-              slidesOffsetBefore: 46,
-              slidesOffsetAfter: 46,
+              slidesOffsetBefore: 42,
+              slidesOffsetAfter: 42,
             },
             1124: {
               slidesPerView: 3,
@@ -317,11 +336,30 @@ export default function NewArrivalsSwiper(){
           {products.map((product) => {
             return (
               <SwiperSlide key={product.id}>
-                <ProductCard product={product} />
+                <ProductCard
+                  product={product}
+                  onOpenConfigurator={(configData) =>
+                    setSelectedProductForConfig(configData)
+                  }
+                />
               </SwiperSlide>
             );
           })}
         </Swiper>
+        <LensConfigurator
+          isOpen={Boolean(selectedProductForConfig)}
+          onClose={() => setSelectedProductForConfig(null)}
+          product={selectedProductForConfig?.product}
+          variant={selectedProductForConfig?.variant}
+          onAddToCart={async (itemConfig) => {
+            await addToCart({
+              ...itemConfig,
+              sizeSlug: selectedProductForConfig?.frameWidth,
+            });
+            setSelectedProductForConfig(null);
+            navigate("/cart");
+          }}
+        />
       </section>
     );
 }

@@ -79,7 +79,7 @@ export default function Home() {
   const isInView = useInView(ref, { amount: 0.3 });
   return (
     <div className="w-full pt-9 overflow-hidden">
-      <section className="relative w-full sm:h-[calc(100vh-20px)] h-[calc(100vh-110px)]  flex flex-col sm:justify-center justify-end items-start sm:px-12 px-8 sm:pb-0  pb-5">
+      <section className="relative w-full lg:h-[calc(100vh-20px)] h-[calc(100vh-110px)]  flex flex-col lg:justify-center justify-end items-start lg:px-12 px-8 lg:pb-0  pb-5">
         <div className="absolute inset-0 ">
           <img
             src={hero_glases}
@@ -87,10 +87,10 @@ export default function Home() {
             className="w-full h-full object-cover    object-center"
           />
         </div>
-        <div className="flex  sm:hidden text-[45px] z-3 font-extralight font-serif ">
+        <div className="flex  lg:hidden text-[45px] z-3 font-extralight font-serif ">
           <p>SEE SUMMER BETTER</p>
         </div>
-        <div className="sm:block hidden text-[115px] z-3 font-extralight font-serif leading-30 tracking-tighter">
+        <div className="lg:block hidden text-[115px] z-3 font-extralight font-serif leading-30 tracking-tighter">
           <motion.p
             initial={{ opacity: 0, x: -150 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -117,7 +117,7 @@ export default function Home() {
           </motion.p>
         </div>
 
-        <div className="flex flex-wrap justify-center w-full items-center sm:hidden  pt-4 gap-x-5 gap-y-1.5 z-3">
+        <div className="flex flex-wrap  w-full items-center lg:hidden  pt-4 gap-x-4 gap-y-1.5 z-3">
           <motion.button
             whileHover={{
               scale: 1.03,
@@ -162,7 +162,7 @@ export default function Home() {
             </Link>
           </motion.button>
         </div>
-        <div className="hidden sm:flex flex-row pt-7 gap-3 z-3">
+        <div className="hidden lg:flex flex-row pt-7 gap-3 z-3">
           <motion.button
             initial={{ opacity: 0, x: -150 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -180,13 +180,13 @@ export default function Home() {
               y: 1,
               transition: { duration: 0.3, ease: "linear" },
             }}
-            className="flex sm:h-12 sm:w-43  rounded-4xl bg-[#1050D0] overflow-hidden  hover:bg-[#0b3fa3]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
+            className="flex lg:h-12 lg:w-43  rounded-4xl bg-[#1050D0] overflow-hidden  hover:bg-[#0b3fa3]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
           >
             <Link
               to="/"
               className="h-full w-full flex items-center justify-center"
             >
-              <p className="text-white sm:text-[16px]  font-semibold font-sans">
+              <p className="text-white lg:text-[16px]  font-semibold font-sans">
                 Start with a quiz
               </p>
             </Link>
@@ -209,13 +209,13 @@ export default function Home() {
               y: 1,
               transition: { duration: 0.2, ease: "easeInOut" },
             }}
-            className="flex sm:h-12 sm:w-43   rounded-4xl bg-[#072369] overflow-hidden  hover:bg-[#102b6d]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
+            className="flex lg:h-12 lg:w-43   rounded-4xl bg-[#072369] overflow-hidden  hover:bg-[#102b6d]  hover:shadow-lg hover:shadow-[#1050D0]/30 "
           >
             <Link
               to="/eyeglasses"
               className="h-full w-full flex items-center justify-center"
             >
-              <p className="text-white sm:text-[16px]  font-semibold font-sans">
+              <p className="text-white lg:text-[16px]  font-semibold font-sans">
                 Shop eyeglasses
               </p>
             </Link>
@@ -231,7 +231,7 @@ export default function Home() {
         >
           <Link
             to="/"
-            className="w-full h-full hidden sm:flex flex-row gap-2 items-center hover:opacity-80 transition-opacity"
+            className="w-full h-full hidden lg:flex flex-row gap-2 items-center hover:opacity-80 transition-opacity"
           >
             <p className="text-white font-sans text-[16px] font-semibold">
               Shop Summer
@@ -263,7 +263,7 @@ export default function Home() {
             duration: 1.2,
             ease: "easeInOut",
           }}
-          className="absolute z-3 bottom-3 left-0 px-12 hidden sm:flex flex-row justify-between items-center w-full text-[17px] font-semibold font-sans text-white"
+          className="absolute z-3 bottom-3 left-0 px-12 hidden lg:flex flex-row justify-between items-center w-full text-[17px] font-semibold font-sans text-white"
         >
           <div className="">
             <Link
@@ -293,10 +293,10 @@ export default function Home() {
         <div className="absolute z-1 inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
       </section>
 
-      <section className="flex sm:flex-row flex-col w-full sm:h-200 xl:h-235 h-190 ">
+      <section className="flex md:flex-row flex-col w-full sm:h-250 md:h-150 lg:h-150 xl:h-200 h-190 ">
         <Link
           to="/sunglasses"
-          className="sm:w-1/2 flex-1 w-full  relative group overflow-hidden"
+          className="lg:w-1/2 flex-1 w-full  relative group overflow-hidden"
         >
           <img
             src={boaz}
@@ -304,12 +304,12 @@ export default function Home() {
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-103"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          <div className="absolute sm:left-12 sm:bottom-17 bottom-8 left-7 flex flex-col ">
-            <p className="sm:text-3xl text-[27px] font-normal font-serif text-white pb-7">
+          <div className="absolute lg:left-12 lg:bottom-17 bottom-8 left-7 flex flex-col ">
+            <p className="lg:text-3xl text-[27px] font-normal font-serif text-white pb-7">
               The sunglasses of the season
             </p>
             <div className="flex bg-white h-12 w-44  rounded-4xl items-center justify-center shadow-sm">
-              <p className="font-sans font-semibold sm:text-[16px] text-[15px] ">
+              <p className="font-sans font-semibold lg:text-[16px] text-[15px] ">
                 Shop Sunglasses
               </p>
             </div>
@@ -318,7 +318,7 @@ export default function Home() {
 
         <Link
           to="/"
-          className="group sm:w-1/2 flex-1 w-full  relative overflow-hidden"
+          className="group lg:w-1/2 flex-1 w-full  relative overflow-hidden"
         >
           <img
             src={men_aero}
@@ -326,13 +326,13 @@ export default function Home() {
             className="w-full h-full object-cover object-top  transition-transform duration-300 group-hover:scale-103"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          <div className="absolute sm:left-12 sm:bottom-17 bottom-8 left-7 flex flex-col ">
-            <p className="sm:text-3xl text-[27px] font-medium font-serif text-white pb-7">
+          <div className="absolute lg:left-12 lg:bottom-17 bottom-8 left-7 flex flex-col ">
+            <p className="lg:text-3xl text-[27px] font-medium font-serif text-white pb-7">
               A new level of lightweight
             </p>
 
             <div className="flex bg-white h-12 w-44 rounded-4xl items-center justify-center shadow-sm">
-              <p className="font-sans font-semibold sm:text-[16px] text-[15px] ">
+              <p className="font-sans font-semibold lg:text-[16px] text-[15px] ">
                 Shop Aero Series
               </p>
             </div>

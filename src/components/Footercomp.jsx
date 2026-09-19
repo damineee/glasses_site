@@ -232,11 +232,11 @@ export default function Footercomp() {
         </div>
       </div>
 
-      <div className=" border-gray-300 border-t border-b  w-full ">
-        <div className="grid grid-cols-1 sm:grid-cols-6 gap-y-10 sm:gap-y-0  pt-10 pb-5 px-14 ">
+      <div className="border-t border-b border-gray-300 w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-10 lg:gap-y-0 pt-10 pb-5 px-6 sm:px-10 lg:px-14">
           {/* 1 */}
           <div className="space-y-3.5">
-            <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
+            <h3 className="text-[14px] font-bold text-gray-900 tracking-wide">
               {footerLinks[0].title}
             </h3>
             <ul className="space-y-3.5 text-[13.5px] text-gray-600 font-medium">
@@ -244,7 +244,7 @@ export default function Footercomp() {
                 <li key={link.name} className="w-full">
                   <Link
                     to={link.path}
-                    className="hover:text-gray-900  block w-full"
+                    className="hover:text-gray-900 transition-colors block w-full"
                   >
                     {link.name}
                   </Link>
@@ -252,123 +252,68 @@ export default function Footercomp() {
               ))}
             </ul>
           </div>
+
           {/* 2 */}
-          <div className="flex flex-col sm:gap-10 gap-5 ">
-            <div className="space-y-3.5">
-              <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
-                {footerLinks[1].title}
-              </h3>
-              <ul className="space-y-3.5 text-[13.5px] text-gray-600 font-medium">
-                {footerLinks[1].links.map((link) => (
-                  <li key={link.name} className="w-full">
-                    <Link
-                      to={link.path}
-                      className="hover:text-gray-900  block w-full"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-3.5">
-              <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
-                {footerLinks[1].secondaryGroup?.title}
-              </h3>
-              <ul className="space-y-3.5 text-[13.5px] text-gray-600 font-medium">
-                {footerLinks[1].secondaryGroup?.links.map((link) => (
-                  <li key={link.name} className="w-full">
-                    <Link
-                      to={link.path}
-                      className="hover:text-gray-900  block w-full"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-3.5">
-              <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
-                {footerLinks[1].tertiaryGroup?.title}
-              </h3>
-              <ul className="space-y-3.5 text-[13.5px] text-gray-600 font-medium">
-                {footerLinks[1].tertiaryGroup?.links.map((link) => (
-                  <li key={link.name} className="w-full">
-                    <Link
-                      to={link.path}
-                      className="hover:text-gray-900  block w-full"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="flex flex-col gap-y-8 lg:gap-y-10">
+            {[
+              footerLinks[1],
+              footerLinks[1].secondaryGroup,
+              footerLinks[1].tertiaryGroup,
+            ]
+              .filter(Boolean)
+              .map((group) => (
+                <div key={group.title} className="space-y-3.5">
+                  <h3 className="text-[14px] font-bold text-gray-900 tracking-wide">
+                    {group.title}
+                  </h3>
+                  <ul className="space-y-3.5 text-[13.5px] text-gray-600 font-medium">
+                    {group.links.map((link) => (
+                      <li key={link.name} className="w-full">
+                        <Link
+                          to={link.path}
+                          className="hover:text-gray-900 transition-colors block w-full"
+                        >
+                          {link.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
           </div>
+
           {/* 3 */}
-
-          <div className="flex flex-col sm:gap-10 gap-5">
-            <div className="space-y-3.5">
-              <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
-                {footerLinks[2].title}
-              </h3>
-              <ul className="space-y-3.5 text-[13.5px] text-gray-600 font-medium">
-                {footerLinks[2].links.map((link) => (
-                  <li key={link.name} className="w-full">
-                    <Link
-                      to={link.path}
-                      className="hover:text-gray-900  block w-full"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-3.5">
-              <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
-                {footerLinks[2].secondaryGroup?.title}
-              </h3>
-              <ul className="space-y-3.5 text-[13.5px] text-gray-600 font-medium">
-                {footerLinks[2].secondaryGroup?.links.map((link) => (
-                  <li key={link.name} className="w-full">
-                    <Link
-                      to={link.path}
-                      className="hover:text-gray-900  block w-full"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-3.5">
-              <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
-                {footerLinks[2].tertiaryGroup?.title}
-              </h3>
-              <ul className="space-y-3.5 text-[13.5px] text-gray-600 font-medium">
-                {footerLinks[2].tertiaryGroup?.links.map((link) => (
-                  <li key={link.name} className="w-full">
-                    <Link
-                      to={link.path}
-                      className="hover:text-gray-900  block w-full"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="flex flex-col gap-y-8 lg:gap-y-10">
+            {[
+              footerLinks[2],
+              footerLinks[2].secondaryGroup,
+              footerLinks[2].tertiaryGroup,
+            ]
+              .filter(Boolean)
+              .map((group) => (
+                <div key={group.title} className="space-y-3.5">
+                  <h3 className="text-[14px] font-bold text-gray-900 tracking-wide">
+                    {group.title}
+                  </h3>
+                  <ul className="space-y-3.5 text-[13.5px] text-gray-600 font-medium">
+                    {group.links.map((link) => (
+                      <li key={link.name} className="w-full">
+                        <Link
+                          to={link.path}
+                          className="hover:text-gray-900 transition-colors block w-full"
+                        >
+                          {link.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
           </div>
 
           {/* 4 */}
           <div className="space-y-3.5">
-            <h3 className="text-[14px] font-bold text-shadow-gray-900 tracking-wide">
+            <h3 className="text-[14px] font-bold text-gray-900 tracking-wide">
               {footerLinks[3].title}
             </h3>
             <ul className="space-y-3.5 text-[13.5px] text-gray-600 font-medium">
@@ -376,7 +321,7 @@ export default function Footercomp() {
                 <li key={link.name} className="w-full">
                   <Link
                     to={link.path}
-                    className="hover:text-gray-900  block w-full"
+                    className="hover:text-gray-900 transition-colors block w-full"
                   >
                     {link.name}
                   </Link>
@@ -385,75 +330,72 @@ export default function Footercomp() {
             </ul>
           </div>
 
-          {/* 5 */}
-          {/* <div className="flex flex-col h-[96%] w-[1px] bg-gray-200  my-auto" /> */}
-          <div className="flex flex-col col-span-2 justify-center items-center  border-gray-200 sm:border-l  my-3">
+          {/* 5 — Contact / help block */}
+          <div className="col-span-2 sm:col-span-3 lg:col-span-2 flex flex-col justify-center items-center border-t lg:border-t-0 lg:border-l border-gray-200 pt-8 lg:pt-0 my-3">
             <h3 className="text-[16px] font-semibold text-black">
               Need a hand?
             </h3>
-            <p className="text-[14px] text-gray-700 font-medium text-center pt-2">
-              We’re here to help. See frequently
-              <br />
-              asked questions and get in touch with
-              <br />
-              us
+            <p className="text-[14px] text-gray-700 font-medium text-center pt-2 leading-relaxed">
+              We're here to help. See frequently asked questions and get in
+              touch with us{" "}
               <Link
                 to="/help"
-                className="underline underline-offset-2 text-blue-700 hover:text-blue-900 pl-1"
+                className="underline underline-offset-2 text-blue-700 hover:text-blue-900"
               >
                 here
               </Link>
-              <span>.</span>
+              .
             </p>
 
             <div className="flex flex-row items-center justify-center gap-5 pt-5">
-              <Link to="/help" className="group">
-                <div className="flex flex-col items-center gap-1.5">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-bell-ring-icon lucide-bell-ring"
-                    className="text-[#757d85] w-5.5 h-5.5"
-                  >
-                    <path d="M10.268 21a2 2 0 0 0 3.464 0" />
-                    <path d="M22 8c0-2.3-.8-4.3-2-6" />
-                    <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
-                    <path d="M4 2C2.8 3.7 2 5.7 2 8" />
-                  </svg>
-                  <p className="text-[14px] text-gray-700 font-medium transition-colors group-hover:text-gray-950">
-                    FAQ
-                  </p>
-                </div>
+              <Link
+                to="/help"
+                className="group flex flex-col items-center gap-1.5"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-[#757d85] w-5.5 h-5.5 group-hover:text-gray-950 transition-colors"
+                >
+                  <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+                  <path d="M22 8c0-2.3-.8-4.3-2-6" />
+                  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+                  <path d="M4 2C2.8 3.7 2 5.7 2 8" />
+                </svg>
+                <p className="text-[14px] text-gray-700 font-medium transition-colors group-hover:text-gray-950">
+                  FAQ
+                </p>
               </Link>
-              <Link to="/help" className="group">
-                <div className="flex flex-col items-center gap-1.5">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-messages-square-icon lucide-messages-square"
-                    className="text-[#757d85] w-5.5 h-5.5"
-                  >
-                    <path d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                    <path d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1" />
-                  </svg>
-                  <p className="text-[14px] text-gray-700 font-medium transition-colors group-hover:text-gray-950">
-                    Chat
-                  </p>
-                </div>
+
+              <Link
+                to="/help"
+                className="group flex flex-col items-center gap-1.5"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-[#757d85] w-5.5 h-5.5 group-hover:text-gray-950 transition-colors"
+                >
+                  <path d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                  <path d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1" />
+                </svg>
+                <p className="text-[14px] text-gray-700 font-medium transition-colors group-hover:text-gray-950">
+                  Chat
+                </p>
               </Link>
             </div>
 
@@ -461,25 +403,43 @@ export default function Footercomp() {
               <a
                 title="Download on the App Store"
                 href="https://apps.apple.com/us/app/warby-parker/id1107693363"
-                className="shadow-sm"
+                target="_blank"
+                rel="noreferrer"
+                className="shadow-sm hover:opacity-80 transition-opacity"
               >
-                <img src={appstore} alt="AppStore_link" w-full h-full />
+                <img
+                  src={appstore}
+                  alt="Download on the App Store"
+                  className="h-10 w-auto"
+                />
               </a>
 
               <a
                 title="Download on the Google Play"
                 href="https://play.google.com/store/apps/details?hl=en_US&id=com.warbyparker.app&referrer=singular_click_id%3D12036457-4e89-4b99-9010-15df625527b0"
-                className="shadow-sm"
+                target="_blank"
+                rel="noreferrer"
+                className="shadow-sm hover:opacity-80 transition-opacity"
               >
-                <img src={googleplay} alt="GooglePlay_link" w-full h-full />
+                <img
+                  src={googleplay}
+                  alt="Download on Google Play"
+                  className="h-10 w-auto"
+                />
               </a>
             </div>
 
-            <div className="flex flex-row gap-4 ">
-              {socialLinks.map((items) => {
-                const IconComponent = items.svgg;
+            <div className="flex flex-row gap-4">
+              {socialLinks.map((item) => {
+                const IconComponent = item.svgg;
                 return (
-                  <a key={items.name} href={items.path} rel="noreferrer">
+                  <a
+                    key={item.name}
+                    href={item.path}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:opacity-70 transition-opacity"
+                  >
                     <IconComponent color="#3A434C" size={23} />
                   </a>
                 );

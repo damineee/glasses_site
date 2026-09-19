@@ -14,7 +14,7 @@ export default function Favorites() {
 
 
   return (
-    <div className="w-full mx-auto px-6 xl:px-8 pt-22 xl:pt-30">
+    <div className="w-full mx-auto px-6  pt-22 xl:pt-30">
       <div className="flex flex-col justify-center items-center pt-7 xl:pt-5">
         <h2 className="text-[32px] sm:text-[40px] xl:text-[58px] font-serif text-black font-medium tracking-tight">
           {favorites.length === 0

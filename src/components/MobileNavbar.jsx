@@ -4,14 +4,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import {  useEffect, useRef, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import useClikOutside from "../utils/hooks/useClickOutside";
-
+import { useAddresses } from "../contexts/AddressContext";
+import { easeInOut } from "framer-motion";
 export default function MobileNavbar({dbCategories,onOpenMenu}){
     const [showSubNav,setShowSubNav]=useState(true);
     const [lastScrollY,setLastScrollY]=useState(0);
-    const {user,signOut}=useAuth();
+    const { user, signOut, deleteAccount } = useAuth();
     const [showUserMenu,setShowUserMenu]=useState(false);
     const userMenuRef=useRef(null);
 
+const { addresses } = useAddresses();
+const defaultAddress = addresses.find((a) => a.is_default) || addresses[0];
+const [confirmingDelete, setConfirmingDelete] = useState(false);
+const [deleting, setDeleting] = useState(false);
+const [deleteError, setDeleteError] = useState("");
     useClikOutside(userMenuRef,()=>{
       if(showUserMenu) setShowUserMenu(false);
     });
@@ -36,6 +42,19 @@ export default function MobileNavbar({dbCategories,onOpenMenu}){
     const handleSignOut=async()=>{
       setShowUserMenu(false);
       await signOut();
+    };
+    const handleDeleteAccount = async () => {
+      setDeleting(true);
+      setDeleteError("");
+      const { error } = await deleteAccount();
+      setDeleting(false);
+
+      if (error) {
+        setDeleteError("Something went wrong. Please try again.");
+        return;
+      }
+
+      setShowUserMenu(false);
     };
 
     const threeCategories=dbCategories?.slice(0,4) || [];
@@ -71,7 +90,7 @@ export default function MobileNavbar({dbCategories,onOpenMenu}){
                 alt="icon"
                 className="w-6 sm:w-5 text-center"
               />
-              <p className="text-[15px] font-semibold font-sans hidden sm:block text-center tracking-tight">
+              <p className="text-[15px] font-semibold font-sans hidden lg:block text-center tracking-tight">
                 Premium eyewear, starting at $95
               </p>
             </Link>
@@ -159,7 +178,38 @@ export default function MobileNavbar({dbCategories,onOpenMenu}){
                             {user.email}
                           </p>
                         </div>
-
+                        <div className="border-b border-gray-100 pb-2">
+                          <p className="text-xs text-gray-400 font-medium mb-1">
+                            Default address
+                          </p>
+                          {defaultAddress ? (
+                            <p className="text-[12px] sm:text-[13px] text-gray-700 leading-snug">
+                              {defaultAddress.address_line1}
+                              {defaultAddress.address_line2
+                                ? `, ${defaultAddress.address_line2}`
+                                : ""}
+                              <br />
+                              {defaultAddress.city}
+                              {defaultAddress.state
+                                ? `, ${defaultAddress.state}`
+                                : ""}{" "}
+                              {defaultAddress.zip_code}
+                            </p>
+                          ) : (
+                            <p className="text-[12px] sm:text-[13px] text-gray-500">
+                              No address saved yet
+                            </p>
+                          )}
+                          <Link
+                            to="/account/addresses"
+                            onClick={() => setShowUserMenu(false)}
+                            className="text-[12px] sm:text-[13px] rounded-md py-1 bg-blue-50 px-2 text-center text-blue-700 font-semibold  mt-1.5 inline-block w-full"
+                          >
+                            {defaultAddress
+                              ? "View & manage addresses"
+                              : "Add an address"}
+                          </Link>
+                        </div>
                         <button
                           onClick={handleSignOut}
                           className="w-full mt-1 flex items-center justify-center gap-2 py-2 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm sm:text-[17px] font-semibold transition-colors cursor-pointer"
@@ -174,7 +224,6 @@ export default function MobileNavbar({dbCategories,onOpenMenu}){
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            
                           >
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                             <polyline points="16 17 21 12 16 7" />
@@ -182,6 +231,60 @@ export default function MobileNavbar({dbCategories,onOpenMenu}){
                           </svg>
                           Sign out
                         </button>
+                        <div className="border-t border-gray-100 mt-2 pt-2">
+                          <AnimatePresence mode="wait">
+                            {!confirmingDelete ? (
+                              <motion.button
+                                key="ask"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2, ease: easeInOut }}
+                                onClick={() => setConfirmingDelete(true)}
+                                className="w-full text-center text-[12px] font-medium text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                              >
+                                Delete account
+                              </motion.button>
+                            ) : (
+                              <motion.div
+                                key="confirm"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2, ease: easeInOut }}
+                                className="flex flex-col gap-2 overflow-hidden"
+                              >
+                                <p className="text-[12px] text-gray-600 text-center leading-snug">
+                                  This will permanently delete your account and
+                                  all your data. This can't be undone.
+                                </p>
+
+                                {deleteError && (
+                                  <p className="text-[12px] text-red-600 text-center font-medium">
+                                    {deleteError}
+                                  </p>
+                                )}
+
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => setConfirmingDelete(false)}
+                                    disabled={deleting}
+                                    className="flex-1 py-1.5 rounded-lg text-[13px] font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer disabled:opacity-50"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    onClick={handleDeleteAccount}
+                                    disabled={deleting}
+                                    className="flex-1 py-1.5 rounded-lg text-[13px] font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors cursor-pointer disabled:opacity-50"
+                                  >
+                                    {deleting ? "Deleting..." : "Yes, delete"}
+                                  </button>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
                       </div>
                     </motion.div>
                   )}

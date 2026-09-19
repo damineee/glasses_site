@@ -79,6 +79,17 @@ export function AuthProvider({children}){
         await supabase.auth.signOut();
     },[]);
 
+    const deleteAccount = useCallback(async()=>{
+        const {error}=await supabase.rpc("delete_user");
+
+        if(!error){
+            await supabase.auth.signOut();
+            setUser(null);
+            setSession(null);
+        }
+        return {error};
+    },[]);
+
     const value=useMemo(
         ()=>({
             user,
@@ -87,9 +98,9 @@ export function AuthProvider({children}){
             signIn,
             signUp,
             signOut,
-
+            deleteAccount,
         }),
-        [user,session,loading,signIn,signUp,signOut]
+        [user,session,loading,signIn,signUp,signOut,deleteAccount]
     );
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

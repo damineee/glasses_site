@@ -1,3 +1,6 @@
 
 @import "tailwindcss";
 
+.swiper-pagination {
+  bottom: -23px !important;
+}

@@ -56,7 +56,7 @@ export default function InsuranceForm(){
         if(!data.firstName.trim()) errs.firstName="First name is required.";
         if(!data.lastName.trim()) errs.lastName="Last name is required.";
         if(!data.dateOfBirth) errs.dateOfBirth="Date of birth is required.";
-        if(!/^\d{5}$/.test(data.zipCode.trim())) errs.zipCode="Enter a valid zip code.";
+        if(!/^\d{3,4}$/.test(data.zipCode.trim())) errs.zipCode="Enter a valid zip code.";
 
 
         if(data.isDependent){
@@ -235,7 +235,7 @@ const renderInput=(name,label,type="text",maxLength,colSpan="col-span-4")=>{
                 "zipCode",
                 "Zip code",
                 "text",
-                5,
+                4,
                 "md:col-span-3 xl:col-span-2",
               )}
             </div>

@@ -259,7 +259,7 @@ export default function CategoryProducts(){
   },[categorySlug,subPath,searchParams]);
 
   return (
-    <div className="w-full min-h-screen pt-30 bg-white flex flex-col  sm:px-12 px-5 mb-5">
+    <div className="w-full min-h-screen pt-30 bg-white flex flex-col  lg:px-12 px-5 mb-5">
       <div className="flex  flex-1  relative">
         <AnimatePresence initial={false}>
           {isSideBarOpen && (
@@ -268,7 +268,7 @@ export default function CategoryProducts(){
               animate={{ width: 350 }}
               exit={{ width: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="sticky hidden sm:block top-5 h-[calc(100vh-9rem)] overflow-y-auto overflow-hidden  border-r border-gray-200 shrink-0 bg-white "
+              className="sticky hidden lg:block top-5 h-[calc(100vh-9rem)] overflow-y-auto overflow-hidden  border-r border-gray-200 shrink-0 bg-white "
             >
               <div className="w-[350px] min-w-[350px]">
                 <div className="flex flex-row items-center text-[12px] font-medium gap-1 text-gray-600 whitespace-nowrap overflow-x-auto no-scrollbar pt-4">
@@ -552,7 +552,7 @@ export default function CategoryProducts(){
         </AnimatePresence>
 
         <main
-          className={`flex-1 flex-col   mb-5 ${isSideBarOpen ? "sm:pl-5 pl-0" : "pl-0"}`}
+          className={`flex-1 flex-col   mb-5 ${isSideBarOpen ? "lg:pl-5 pl-0" : "pl-0"}`}
         >
           {loading ? (
             <div className="w-full h-full flex items-center justify-center text-gray-700 animate-pulse ">
@@ -565,10 +565,10 @@ export default function CategoryProducts(){
           ) : (
             <div className="flex flex-col">
               <div className="flex flex-row justify-between items-center   mt-5">
-                <div className="sm:flex hidden flex-row items-center gap-2">
+                <div className="flex flex-row items-center gap-2">
                   <button
                     onClick={() => setIsSidebarOpen(!isSideBarOpen)}
-                    className="flex flex-row items-center gap-2 cursor-pointer"
+                    className="lg:flex hidden flex-row items-center gap-2 cursor-pointer"
                   >
                     <motion.svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -590,12 +590,12 @@ export default function CategoryProducts(){
                       <path d="M21 19V5" />
                     </motion.svg>
 
-                    <span className="hidden sm:block text-[16px] font-medium ">
+                    <span className="hidden lg:block text-[16px] font-medium ">
                       {isSideBarOpen ? "Hide " : "Show "}filters
                     </span>
                   </button>
 
-                  <span className=" text-center h-[14px] w-[2px] bg-gray-200" />
+                  <span className="lg:block  hidden  text-center h-[14px] w-[2px] bg-gray-200" />
                   <span className="text-[16px] text-gray-600 font-medium">
                     {products.length} frames
                   </span>
@@ -624,7 +624,7 @@ export default function CategoryProducts(){
               </div>
 
               <div
-                className={`grid grid-cols-1 sm:grid-cols-2 mt-5    lg:gap-y-8 2xl:gap-y-12 gap-x-6 ${isSideBarOpen ? "xl:grid-cols-3 " : "xl:grid-cols-4"} `}
+                className={`grid grid-cols-1 sm:grid-cols-2 mt-5 gap-y-6   lg:gap-y-8 2xl:gap-y-12 gap-x-6 ${isSideBarOpen ? "xl:grid-cols-3 " : "xl:grid-cols-4"} `}
               >
                 {products.map((prod) => (
                   <ProductCard

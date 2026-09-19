@@ -1,19 +1,20 @@
 
   import { useState,useEffect, useEffectEvent, useRef } from "react";
-  import { Link, useLocation } from "react-router-dom";
+  import { Link, useLocation,useNavigate } from "react-router-dom";
   import { IoSearch, IoHeartOutline, IoCartOutline } from "react-icons/io5";
   import { FaGlasses } from "react-icons/fa6";
   import glases_svg from "../assets/glases_nav.svg";
   import contact_svg from "../assets/contact_nav.svg";
-  import { motion,AnimatePresence } from "framer-motion";
+  import { motion,AnimatePresence, easeInOut } from "framer-motion";
   import { supabase } from '../utils/supabase';
   import FadeIn from "./FadeIn";
-
   import MobileNavbar from "./MobileNavbar";
   import DrawerMenu from "./DrawerMenu";
 import { useAuth } from "../contexts/AuthContext";
 import useClikOutside from "../utils/hooks/useClickOutside";
 import { useFavorites } from "../contexts/FavoritesContext";
+import { useCart } from "../contexts/CartContext";
+import { useAddresses } from "../contexts/AddressContext";
 
   function getSubcategoryUrl(sub, slug) {
     if (!sub.page_slug) return `/${slug}`;
@@ -25,18 +26,23 @@ import { useFavorites } from "../contexts/FavoritesContext";
   }
 
   export default function Navbar({ isHidden }) {
+    const navigate = useNavigate();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [dbCategories, setDbCategories] = useState([]);
     const [activeMenuSlug, setActiveMenuSlug] = useState(null);
     const [isDrawerOpen,setIsDrawerOpen]=useState(false);
-    const {user,signOut}=useAuth();
+    const {user,signOut,deleteAccount}=useAuth();
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState("");
     const [showUserMenu,setShowUserMenu]=useState(false);
     const location = useLocation();
     const userRef=useRef();
     const {favorites}=useFavorites();
-
-
+    const {  cartCount } = useCart();
+const { addresses } = useAddresses();
+const defaultAddress = addresses.find((a) => a.is_default) || addresses[0];
     useEffect(()=>{
       setIsDrawerOpen(false);
       setShowUserMenu(false);
@@ -125,6 +131,21 @@ import { useFavorites } from "../contexts/FavoritesContext";
       } else {
         setActiveMenuSlug(slug);
       }
+    };
+
+    const handleDeleteAccount = async () => {
+      setDeleting(true);
+      setDeleteError("");
+      const { error } = await deleteAccount();
+      setDeleting(false);
+
+      if (error) {
+        setDeleteError("Something went wrong. Please try again.");
+        return;
+      }
+
+      setShowUserMenu(false);
+      navigate("/");
     };
 
     const container = {
@@ -300,10 +321,45 @@ import { useFavorites } from "../contexts/FavoritesContext";
                             {user.email}
                           </p>
                         </div>
-
-                        <button
+                        <div className="border-b border-gray-100 pb-2">
+                          <p className="text-[12px] text-gray-400 font-medium mb-1">
+                            Default address
+                          </p>
+                          {defaultAddress ? (
+                            <p className="text-[13px] text-gray-700 leading-snug">
+                              {defaultAddress.address_line1}
+                              {defaultAddress.address_line2
+                                ? `, ${defaultAddress.address_line2}`
+                                : ""}
+                              <br />
+                              {defaultAddress.city}
+                              {defaultAddress.state
+                                ? `, ${defaultAddress.state}`
+                                : ""}{" "}
+                              {defaultAddress.zip_code}
+                            </p>
+                          ) : (
+                            <p className="text-[13px] text-gray-500">
+                              No address saved yet
+                            </p>
+                          )}
+                          <Link
+                            to="/account/addresses"
+                            onClick={() => setShowUserMenu(false)}
+                            className="text-[13px] text-blue-700 font-semibold hover:underline mt-1 inline-block"
+                          >
+                            {defaultAddress
+                              ? "View & manage addresses"
+                              : "Add an address"}
+                          </Link>
+                        </div>
+                        <motion.button
+                        whileHover={{
+                                  scale: 1.02,
+                                  transition: { duration: 0.1, ease: "linear" },
+                                }}
                           onClick={handleSignOut}
-                          className="w-full mt-1 flex items-center justify-center gap-2 py-2 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                          className="w-full mt-1 flex items-center justify-center gap-2 py-2 px-3 bg-red-50  text-red-800 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -321,7 +377,65 @@ import { useFavorites } from "../contexts/FavoritesContext";
                             <line x1="21" y1="12" x2="9" y2="12" />
                           </svg>
                           Sign out
-                        </button>
+                        </motion.button>
+                        <div className="border-t border-gray-100 mt-2 pt-2">
+                          <AnimatePresence mode="wait">
+                            {!confirmingDelete ? (
+                              <motion.button
+                                key="ask"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                whileHover={{
+                                  scale: 1.02,
+                                  transition: { duration: 0.1, ease: "linear" },
+                                }}
+                                transition={{ duration: 0.2, ease: easeInOut }}
+                                onClick={() => setConfirmingDelete(true)}
+                                className="w-full text-center text-[12px] py-2.5 font-medium rounded-lg text-white bg-red-500 hover:bg-red-700 transition-colors cursor-pointer"
+                              >
+                                Delete account
+                              </motion.button>
+                            ) : (
+                              <motion.div
+                                key="confirm"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2, ease: easeInOut }}
+                                className="flex flex-col gap-2 overflow-hidden"
+                              >
+                                <p className="text-[12px] text-gray-600 text-center leading-snug">
+                                  This will permanently delete your account and
+                                  all your data. This can't be undone.
+                                </p>
+
+                                {deleteError && (
+                                  <p className="text-[12px] text-red-600 text-center font-medium">
+                                    {deleteError}
+                                  </p>
+                                )}
+
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => setConfirmingDelete(false)}
+                                    disabled={deleting}
+                                    className="flex-1 py-1.5 rounded-lg text-[13px] font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer disabled:opacity-50"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    onClick={handleDeleteAccount}
+                                    disabled={deleting}
+                                    className="flex-1 py-1.5 rounded-lg text-[13px] font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors cursor-pointer disabled:opacity-50"
+                                  >
+                                    {deleting ? "Deleting..." : "Yes, delete"}
+                                  </button>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -411,19 +525,18 @@ import { useFavorites } from "../contexts/FavoritesContext";
                 >
                   <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
                 </svg>
-                  {favorites.length>0 && (
-                    <span className="absolute bottom-3 left-3 h-[15px] rounded-full w-[15px] bg-[#1050d0] flex items-center justify-center">
-                  <p className="text-white text-[11px] font-semibold font-[Arial]">
-                    {favorites.length}
-                  </p>
-                </span>
-                  )}
-                
+                {favorites.length > 0 && (
+                  <span className="absolute bottom-3 left-3 h-[15px] rounded-full w-[15px] bg-[#1050d0] flex items-center justify-center">
+                    <p className="text-white text-[11px] font-semibold font-[Arial]">
+                      {favorites.length}
+                    </p>
+                  </span>
+                )}
               </motion.div>
             </Link>
 
             {/* {Cart} */}
-            <Link className="">
+            <Link to="/cart" className="">
               <motion.div
                 whileHover={{
                   scale: 1.06,
@@ -434,7 +547,7 @@ import { useFavorites } from "../contexts/FavoritesContext";
                   y: 1,
                   transition: { duration: 0.3, ease: "easeInOut" },
                 }}
-                className=" hover:opacity-80  overflow-hidden "
+                className=" hover:opacity-80  relative"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -446,6 +559,13 @@ import { useFavorites } from "../contexts/FavoritesContext";
                 >
                   <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
                 </svg>
+                {cartCount > 0 && (
+                  <span className="absolute bottom-3 left-3 h-[15px] rounded-full w-[15px] bg-[#1050d0] flex items-center justify-center">
+                    <p className="text-white text-[11px] font-semibold font-[Arial]">
+                      {cartCount}
+                    </p>
+                  </span>
+                )}
               </motion.div>
             </Link>
           </motion.div>

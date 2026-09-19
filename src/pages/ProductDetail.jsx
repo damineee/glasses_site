@@ -1,10 +1,12 @@
 import React,{useEffect,useState} from "react";
-import { useParams,useSearchParams ,Link} from "react-router-dom";
+import { useParams,useSearchParams ,Link, useNavigate} from "react-router-dom";
 import { supabase } from "../utils/supabase";
-import { div, object } from "framer-motion/client";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Mousewheel } from "swiper/modules";
+import { Mousewheel,Navigation,Pagination } from "swiper/modules";
 import "swiper/css";
+
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 import RatingStars from "../components/RatingStars";
 import file_singlevision from "../assets/file_singlevision.svg";
 import glassesProd from "../assets/glassesProd.svg";
@@ -13,7 +15,9 @@ import insurance from "../assets/insurance.svg";
 import replacement from "../assets/replacement.svg";
 import WidthGuideModal from "../components/WidthGuideModal";
 import FavoritesButton from "../components/FavoritesButton";
-
+import LensConfigurator from "../components/LensConfigurator";
+import FrameSizeOverlay from "../components/FrameSizeOverlay";
+import { useCart } from "../contexts/CartContext";
 export default function ProductDetail(){
     const {category,productSlug,colorSlug}=useParams();
 
@@ -26,11 +30,15 @@ export default function ProductDetail(){
     const [activeImage,setActiveImage]=useState(null);
       const [activeImageType,setActiveImageType]=useState(null);
    const [isOpenWidthMenu,setisOpenWidthMenu]=useState(false);
+   const [isConfiguratorOpen, setIsConfiguratorOpen] = useState(false);
+    const [openWidthGuide,setOpenWidthGuide]=useState(false);
 
+    const { addToCart } = useCart();
+    const navigate=useNavigate();
     useEffect(()=>{
         async function fetchProductDetail() {
             setLoading(true);
-
+              setOpenWidthGuide(false);
 
             const {data,error}=await supabase
             .from("products")
@@ -87,6 +95,18 @@ export default function ProductDetail(){
         (size)=>size.size_name_slug ===frameWidth
     );
 
+
+    const handleOpenWidthGuide=()=>{
+      const frontImg=selectedVariant?.variant_images?.find((img)=>img.image_type==="product_front");
+
+      if(frontImg){
+        setActiveImage(frontImg.image_url);
+        setActiveImageType(frontImg.image_type);
+      }
+
+      setOpenWidthGuide(!openWidthGuide);
+    };
+
     const handleWidthChange =(newWidth)=>{
         setSearchParams({w:newWidth});
     };
@@ -130,79 +150,7 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
     return (
       <div className="xl:mt-30 mt-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 w-full">
-          <div className="flex lg:col-span-8 bg-[#faf7f3] h-[calc(100vh-340px)] sm:h-[calc(100vh-280px)] lg:h-[calc(100vh-80px)] w-full   relative ">
-            <div className=" absolute inset-0 h-full w-full items-center justify-center ">
-              <button className=" w-full h-full cursor-pointer bg-transparent">
-                <img
-                  src={
-                    activeImage || selectedVariant?.variant_images[0].image_url
-                  }
-                  alt={selectedVariant?.color_name}
-                  className={`w-full h-full ${
-                    isModel
-                      ? "object-cover object-center"
-                      : "object-contain object-center pt-10 pr-10 pl-36 lg:pt-20 lg:pl-50 lg:pr-15 xl:pt-20 xl:pl-60 xl:pr-30 "
-                  }`}
-                />
-              </button>
-            </div>
-
-            {galleryImages.length > 0 && (
-              <div className="sticky top-0 h-full z-20 w-20 pl-13 pt-20 flex items-center pointer-events-none self-start">
-                <div className="w-full pointer-events-auto">
-                  <Swiper
-                    direction={"vertical"}
-                    slidesPerView={4}
-                    spaceBetween={10}
-                    mousewheel={true}
-                    modules={[Mousewheel]}
-                    className="w-15 h-[260px] sm:w-20 sm:h-[350px]"
-                  >
-                    {galleryImages.map((imgObj) => {
-                      const isSelected = activeImage === imgObj.image_url;
-                      const imageType =
-                        imgObj.image_type === "model_women" ||
-                        imgObj.image_type === "model_men";
-                      return (
-                        <SwiperSlide key={imgObj.id} className="">
-                          <button
-                            onClick={() => {
-                              setActiveImage(imgObj.image_url);
-                              setActiveImageType(imgObj.image_type);
-                            }}
-                            className={`w-full h-full rounded-xl  border overflow-hidden bg-white  cursor-pointer transition-color duration-100 ${
-                              isSelected
-                                ? "border-blue-900"
-                                : "border-gray-300 hover:border-gray-600"
-                            }`}
-                          >
-                            <img
-                              src={imgObj.image_url}
-                              alt={imgObj.image_type}
-                              className={`w-full h-full  ${imageType ? "object-contain  scale-135 blur-[0.1px]" : "object-contain  scale-90 "}`}
-                            />
-                          </button>
-                        </SwiperSlide>
-                      );
-                    })}
-                  </Swiper>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-col lg:col-span-4 px-6 pt-7">
-            {/* {loading ? (
-          <div className="w-50 h-20 animate-pulse " />
-        ) : (
-          <div className="overflow-hidden w-50 h-20">
-            <img
-              src={selectedVariant?.main_image_url}
-              alt={selectedVariant?.color_name}
-              className="w-full h-full object-contain"
-            />
-          </div>
-        )} */}
+          <div className="lg:hidden flex flex-col px-6 pt-5 pb-3">
             <div className="flex flex-row items-center text-[12px] gap-1 text-gray-700 whitespace-nowrap overflow-x-auto no-scrollbar">
               <Link to="/" className="hover:underline hover:text-gray-950">
                 Home
@@ -249,29 +197,195 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
               <span className="text-black font-semibold">{product.name}</span>
             </div>
             <div className="flex flex-col pt-2 relative">
-              <h2 className="pl-[1px] text-[31px] font-medium font-serif">
+              <h2 className="pl-[1px] text-[26px] font-medium font-serif">
                 {product.name}
               </h2>
 
-              <p className="text-gray-700 text-[17px] font-semibold">
+              <p className="text-gray-700 text-[15px] font-semibold pt-2">
                 Starting at ${product.base_price}
               </p>
 
-              <p className="text-[#096258] font-semibold text-[17px] pt-[2px]">
+              <p className="text-[#096258] font-semibold text-[15px] pt-[1px]">
                 20% off extra Rx pairs
               </p>
               <FavoritesButton
-                className="absolute right-2 !bg-transparent  !shadow-none"
+                className="absolute right-0 !bg-transparent  !shadow-none"
                 variantId={selectedVariant.id}
                 sizeSlug={frameWidth}
+                size="w-5.5 w-5.5"
               />
-              <div className="absolute  right-2 bottom-8">
+              <div className="absolute  right-0 bottom-2">
                 <RatingStars
                   rating={product.rating}
                   totalReviews={product.rating_count}
                 />
               </div>
-              <div className="h-[1px] rounded-2xl w-full bg-gray-200 my-2" />
+            </div>
+          </div>
+          <div className="flex lg:col-span-8 bg-[#faf7f3] h-[calc(100vh-400px)] md:h-[calc(100vh-400px)] lg:h-full xl:h-[calc(100vh-80px)] w-full   relative ">
+            <div className=" absolute inset-0 h-full w-full items-center justify-center ">
+              <button className="relative w-full h-full cursor-pointer bg-transparent">
+                <img
+                  src={
+                    activeImage || selectedVariant?.variant_images[0].image_url
+                  }
+                  alt={selectedVariant?.color_name}
+                  className={`w-full h-full ${
+                    isModel
+                      ? "object-cover object-center"
+                      : "object-contain object-center pt-10 pr-10 pl-30 lg:pt-20 lg:pl-40 lg:pr-15 xl:pt-20 xl:pl-60 xl:pr-30 "
+                  }`}
+                />
+                {openWidthGuide && (
+                  <FrameSizeOverlay sizeDetails={activeSizeDetails} />
+                )}
+              </button>
+
+              <button
+                onClick={handleOpenWidthGuide}
+                className={`absolute flex flex-col items-center justify-center rounded-full right-6 sm:right-8 top-5 cursor-pointer border sm:p-3 shadow-md transition-colors  p-2 bg-white ${openWidthGuide ? "border-gray-700" : "hover:border-gray-600 border-gray-200"}`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-ruler-icon lucide-ruler"
+                  className="text-black sm:w-6 sm:h-6 w-4 h-4"
+                >
+                  <path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z" />
+                  <path d="m14.5 12.5 2-2" />
+                  <path d="m11.5 9.5 2-2" />
+                  <path d="m8.5 6.5 2-2" />
+                  <path d="m17.5 15.5 2-2" />
+                </svg>
+              </button>
+            </div>
+
+            {galleryImages.length > 0 && (
+              <div className="sticky top-0 h-full z-20 w-20 pl-6 lg:pl-13 pt-20 flex items-center pointer-events-none self-start">
+                <div className="w-full pointer-events-auto">
+                  <Swiper
+                    direction={"vertical"}
+                    slidesPerView={4.3}
+                    spaceBetween={10}
+                    mousewheel={true}
+                    simulateTouch={true}
+                    modules={[Mousewheel, Navigation, Pagination]}
+                    className="w-15 h-[260px] lg:w-20 lg:h-[350px]"
+                  >
+                    {galleryImages.map((imgObj) => {
+                      const isSelected = activeImage === imgObj.image_url;
+                      const imageType =
+                        imgObj.image_type === "model_women" ||
+                        imgObj.image_type === "model_men";
+                      return (
+                        <SwiperSlide key={imgObj.id} className="">
+                          <button
+                            onClick={() => {
+                              setActiveImage(imgObj.image_url);
+                              setActiveImageType(imgObj.image_type);
+                              setOpenWidthGuide(false);
+                            }}
+                            className={`w-full h-full rounded-xl  border overflow-hidden bg-white  cursor-pointer transition-color duration-100 ${
+                              isSelected
+                                ? "border-blue-900"
+                                : "border-gray-300 hover:border-gray-600"
+                            }`}
+                          >
+                            <img
+                              src={imgObj.image_url}
+                              alt={imgObj.image_type}
+                              className={`w-full h-full  ${imageType ? "object-contain  scale-135 blur-[0.1px]" : "object-contain  scale-90 "}`}
+                            />
+                          </button>
+                        </SwiperSlide>
+                      );
+                    })}
+                  </Swiper>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col lg:col-span-4  px-6 pt-7">
+            <div className="hidden lg:flex flex-col">
+              <div className="flex flex-row items-center text-[12px] gap-1 text-gray-700 whitespace-nowrap overflow-x-auto no-scrollbar">
+                <Link to="/" className="hover:underline hover:text-gray-950">
+                  Home
+                </Link>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-chevron-right-icon lucide-chevron-right"
+                  className="w-2 h-3"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+
+                <Link
+                  to={`/${category}`}
+                  className="hover:underline capitalize hover:text-gray-950"
+                >
+                  {category}
+                </Link>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-chevron-right-icon lucide-chevron-right"
+                  className="w-2 h-3"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+
+                <span className="text-black font-semibold">{product.name}</span>
+              </div>
+              <div className="flex flex-col pt-2 relative">
+                <h2 className="pl-[1px] text-[31px] font-medium font-serif">
+                  {product.name}
+                </h2>
+
+                <p className="text-gray-700 text-[17px] font-semibold">
+                  Starting at ${product.base_price}
+                </p>
+
+                <p className="text-[#096258] font-semibold text-[17px] pt-[2px]">
+                  20% off extra Rx pairs
+                </p>
+                <FavoritesButton
+                  className="absolute right-0 !bg-transparent  !shadow-none"
+                  variantId={selectedVariant.id}
+                  sizeSlug={frameWidth}
+                  size="w-6 h-6"
+                />
+                <div className="absolute  right-0 bottom-8">
+                  <RatingStars
+                    rating={product.rating}
+                    totalReviews={product.rating_count}
+                  />
+                </div>
+                <div className="h-[1px] rounded-2xl w-full bg-gray-200 my-2" />
+              </div>
             </div>
             <div className="flex flex-col ">
               <div className="flex flex-row items-center gap-3">
@@ -335,33 +449,54 @@ const isModel = activeImageType === "model_women" || activeImageType === "model_
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2.5 py-2">
-                {selectedVariant?.product_sizes?.map((size) => (
-                  <button
-                    key={size.id}
-                    onClick={() => handleWidthChange(size.size_name_slug)}
-                    className={`sm:w-34 w-20 xl:w-25 h-11 text-[14px] font-bold text-black border rounded-lg transition-all cursor-pointer items-center justify-center ${
-                      frameWidth === size.size_name_slug
-                        ? "  border-black"
-                        : "  border-gray-300 hover:border-gray-900"
-                    }`}
-                  >
-                    {size.size_name}
-                  </button>
-                ))}
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(72px,1fr))] gap-2.5 py-2">
+                {selectedVariant?.product_sizes?.map((size) => {
+                  const isSelected = frameWidth === size.size_name_slug;
+                  return (
+                    <button
+                      key={size.id}
+                      type="button"
+                      onClick={() => handleWidthChange(size.size_name_slug)}
+                      aria-pressed={isSelected}
+                      className={`flex items-center justify-center h-11 rounded-lg border text-[14px] font-bold cursor-pointer transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black ${
+                        isSelected
+                          ? "bg-white text-black border-gray-900 shadow-md "
+                          : "bg-white text-black border-gray-300 hover:border-gray-900 hover:shadow-sm"
+                      }`}
+                    >
+                      {size.size_name}
+                    </button>
+                  );
+                })}
+                {selectedVariant?.product_sizes?.length === 1 && (
+                  <div
+                    aria-hidden="true"
+                    className="h-11 pointer-events-none opacity-0 invisible"
+                  />
+                )}
               </div>
               <div className="h-[1px] rounded-2xl w-full bg-gray-200 mt-5" />
             </div>
             <div className="flex flex-col mt-6 gap-2">
-              <Link
-                to=""
-                className=" flex bg-[#1050D0] rounded-4xl text-white w-full h-12 items-center justify-center transition-color duration-200 hover:bg-blue-800 
-                     "
+              <button
+                onClick={() => setIsConfiguratorOpen(true)}
+                className="flex bg-[#1050D0] rounded-4xl text-white w-full h-12 items-center justify-center transition-color duration-200 hover:bg-blue-800 cursor-pointer"
               >
-                <p className="text-[16px] font-sans font-semibold ">
+                <p className="text-[16px] font-sans font-semibold">
                   Select lenses and buy
                 </p>
-              </Link>
+              </button>
+
+              <LensConfigurator
+                isOpen={isConfiguratorOpen}
+                onClose={() => setIsConfiguratorOpen(false)}
+                product={product}
+                variant={selectedVariant}
+                onAddToCart={async (itemConfig) => {
+                  await addToCart({ ...itemConfig, sizeSlug: frameWidth });
+                  navigate("/cart");
+                }}
+              />
 
               <div className="flex flex-row items-center justify-center gap-3.5 pt-2">
                 <div className="flex gap-2 items-center">
