@@ -9,7 +9,7 @@ const ORDER_SELECT = `
   total_price,
   payment_method,
   created_at,
-  shipping_addresses ( full_name,country, address_line1,address_line2, city, zip_code ),
+  shipping_address_snapshot,
   order_items (
     id,
     quantity,
@@ -107,7 +107,9 @@ export default function MyOrders() {
       </h2>
 
       <div className="flex flex-col gap-5">
-        {orders.map((order) => (
+        {orders.map((order) => {
+           const addr = order.shipping_address_snapshot;
+        return (
           <div key={order.id} className="border border-gray-200 rounded-xl p-5">
             <div className="flex justify-between items-start flex-wrap gap-2">
               <div>
@@ -165,12 +167,12 @@ export default function MyOrders() {
 
             <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
               <p className="text-[13px] text-gray-600">
-                Shipping to {order.shipping_addresses?.country},{" "}
-                {order.shipping_addresses?.city},{" "}
-                {order.shipping_addresses?.address_line1}{" "}
-                {order.shipping_addresses?.address_line2
-                  ? `, ${order.shipping_addresses?.address_line2}`
-                  : ""}
+                {addr
+                  ? ` Shipping to ${addr?.country} ,${" "}
+                ${addr?.city} ,${" "}
+                ${addr?.address_line1}${" "}
+                ${addr?.address_line2 ? `${addr?.address_line2}` : ""} , ${addr.zip_code}`
+                  : "Address unavailable"}
               </p>
               <p className="font-bold">${order.total_price.toFixed(2)}</p>
             </div>
@@ -185,7 +187,8 @@ export default function MyOrders() {
               </button>
             )}
           </div>
-        ))}
+        );
+        })}
       </div>
     </div>
   );

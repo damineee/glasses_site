@@ -13,7 +13,7 @@ import vision2 from "../assets/visionBenfoto_2.avif";
 import vision3 from "../assets/visionBenfoto_3.avif";
 import InsuranceForm from "../components/InsuranceForm";
 
-//flex h-12 w-43 rounded-4xl bg-[#1050D0] overflow-hidden transition-all duration-300 ease-in-out hover:bg-[#0b3fa3] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#1050D0]/30
+
 
 
   

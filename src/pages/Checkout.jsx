@@ -69,14 +69,25 @@ useEffect(() => {
     return saved;
   };
 
+  const buildSnapshot = (addr) => ({
+    full_name: addr.full_name,
+    phone: addr.phone,
+    address_line1: addr.address_line1,
+    address_line2: addr.address_line2 || null,
+    city: addr.city,
+    state: addr.state || null,
+    zip_code: addr.zip_code,
+    country: addr.country,
+  });
+
   const handlePlaceOrder = async () => {
     if (!user || cartItems.length === 0) return;
 
     setPlacingOrder(true);
     try {
       let addressId = selectedAddressId;
-
-      // Dacă userul completa o adresă nouă, o salvăm întâi
+      let chosenAddress = addresses.find((a) => a.id === addressId);
+      
       if (isAddingNew || addresses.length === 0) {
         const saved = await handleSaveNewAddress();
         if (!saved) {
@@ -84,21 +95,23 @@ useEffect(() => {
           return;
         }
         addressId = saved.id;
+        chosenAddress=saved;
       }
 
-      if (!addressId) {
+      if (!addressId && !chosenAddress) {
         alert("Please select or add a shipping address.");
         setPlacingOrder(false);
         return;
       }
 
-      // 1. Creăm comanda
+     
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .insert([
           {
             user_id: user.id,
             shipping_address_id: addressId,
+            shipping_address_snapshot: buildSnapshot(chosenAddress),
             payment_method: "cash_on_delivery",
             status: "pending",
             total_price: itemsTotal,
@@ -109,7 +122,7 @@ useEffect(() => {
 
       if (orderError) throw orderError;
 
-      // 2. Legăm toate itemii din coș de comanda nou creată
+      
       const itemIds = cartItems.map((i) => i.id);
       const { error: linkError } = await supabase
         .from("order_items")
@@ -146,7 +159,7 @@ useEffect(() => {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-8">
         <div className="flex flex-col gap-6">
-          {/* Adrese existente */}
+          
           {!addressesLoading && addresses.length > 0 && !isAddingNew && (
             <div className="flex flex-col gap-3">
               <h3 className="font-semibold text-[17px]">Shipping address</h3>
@@ -200,7 +213,7 @@ useEffect(() => {
             </div>
           )}
 
-          {/* Formular adresă nouă */}
+          
           {(isAddingNew || addresses.length === 0) && (
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
@@ -299,7 +312,7 @@ useEffect(() => {
             </div>
           )}
 
-          {/* Metodă de plată */}
+          
           <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
             <h3 className="font-semibold text-[17px] pt-4">Payment method</h3>
             <div className="flex items-center gap-3 border border-black rounded-xl p-4">
@@ -309,7 +322,7 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Sumar comandă */}
+        
         <div className="flex flex-col gap-4 h-fit md:sticky md:top-28">
           <div className="border border-gray-200 rounded-xl p-5 flex flex-col gap-3">
             <div className="flex justify-between text-[15px]">

@@ -98,7 +98,7 @@ const updateAddress = async (addressId, addressData) => {
 
   if (error) {
     console.error("Error updating address:", error.message);
-    setAddresses(prevAddresses); // rollback
+    setAddresses(prevAddresses); 
     throw error;
   }
 };
@@ -109,7 +109,6 @@ const setDefaultAddress = async (addressId) => {
     prev.map((a) => ({ ...a, is_default: a.id === addressId })),
   );
 
-  // scoatem default-ul de pe toate, apoi îl punem pe cea aleasă
   const { error: clearError } = await supabase
     .from("shipping_addresses")
     .update({ is_default: false })

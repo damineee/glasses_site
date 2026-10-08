@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 import { useFavorites } from "../contexts/FavoritesContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../utils/supabase";
 import ProductCard from "../components/ProductCard";
+import { useCart } from "../contexts/CartContext";
+import LensConfigurator from "../components/LensConfigurator";
 
 
 export default function Favorites() {
   const { favorites, loading } = useFavorites();
-
+  const navigate = useNavigate();
+  const [activeConfigurator, setActiveConfigurator] = useState(null);
+  const { addToCart } = useCart();
 
 
   
@@ -63,6 +67,13 @@ export default function Favorites() {
                 initialVariant={variant}
                 selectedWidths={fav.size_slug}
                 onlyInitialVariant
+                onOpenConfigurator={(selectedVariant, frameWidth) => {
+                setActiveConfigurator({
+                product,
+                variant: selectedVariant || variant, 
+                frameWidth: frameWidth || fav.size_slug, 
+    });
+  }}
               />
             </div>
             );
@@ -71,7 +82,22 @@ export default function Favorites() {
         </div>
       )} </>
       )}
-    
+    {activeConfigurator && (
+              <LensConfigurator
+                isOpen={Boolean(activeConfigurator)}
+                onClose={() => setActiveConfigurator(null)}
+                product={activeConfigurator.product}
+                variant={activeConfigurator.variant}
+                onAddToCart={async (itemConfig) => {
+                  await addToCart({
+                    ...itemConfig,
+                    sizeSlug: activeConfigurator.frameWidth,
+                  });
+                  setActiveConfigurator(null);
+                  navigate("/cart");
+                }}
+              />
+            )}
     </div>
   );
 }

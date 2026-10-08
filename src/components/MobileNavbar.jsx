@@ -186,10 +186,10 @@ const [deleteError, setDeleteError] = useState("");
                             <p className="text-[12px] sm:text-[13px] text-gray-700 leading-snug">
                               {defaultAddress.address_line1}
                               {defaultAddress.address_line2
-                                ? `, ${defaultAddress.address_line2}`
+                                ? `,${defaultAddress.address_line2}`
                                 : ""}
                               <br />
-                              {defaultAddress.city}
+                              {defaultAddress.country} {defaultAddress.city}
                               {defaultAddress.state
                                 ? `, ${defaultAddress.state}`
                                 : ""}{" "}
@@ -203,16 +203,64 @@ const [deleteError, setDeleteError] = useState("");
                           <Link
                             to="/account/addresses"
                             onClick={() => setShowUserMenu(false)}
-                            className="text-[12px] sm:text-[13px] rounded-md py-1 bg-blue-50 px-2 text-center text-blue-700 font-semibold  mt-1.5 inline-block w-full"
+                            className="text-[12px] sm:text-[13px] rounded-md py-1 bg-blue-50 hover:bg-blue-100 transition-colors px-2 text-center text-blue-700 font-semibold  mt-2 inline-block w-full"
                           >
                             {defaultAddress
                               ? "View & manage addresses"
                               : "Add an address"}
                           </Link>
                         </div>
-                        <button
+
+                        <div className="border-b border-gray-100 pb-2">
+                          <p className="text-xs text-gray-400 font-medium mb-1.5">
+                            Order history
+                          </p>
+                          <Link
+                            to="/my-orders"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center justify-between gap-2 py-2 px-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-[13px] sm:text-[14px] font-semibold text-gray-800 transition-colors"
+                          >
+                            <span className="flex items-center gap-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                                <rect x="8" y="2" width="8" height="4" rx="1" />
+                                <path d="M9 13h6" />
+                                <path d="M9 17h6" />
+                              </svg>
+                              My orders
+                            </span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="text-gray-400"
+                            >
+                              <path d="m9 18 6-6-6-6" />
+                            </svg>
+                          </Link>
+                        </div>
+                        <motion.button
+                          whileHover={{
+                            scale: 1.01,
+                          }}
                           onClick={handleSignOut}
-                          className="w-full mt-1 flex items-center justify-center gap-2 py-2 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm sm:text-[17px] font-semibold transition-colors cursor-pointer"
+                          className="w-full mt-1 flex items-center justify-center gap-2 py-2 px-3 bg-red-50  text-red-700 rounded-lg text-sm sm:text-[17px] font-semibold transition-colors cursor-pointer"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -230,7 +278,7 @@ const [deleteError, setDeleteError] = useState("");
                             <line x1="21" y1="12" x2="9" y2="12" />
                           </svg>
                           Sign out
-                        </button>
+                        </motion.button>
                         <div className="border-t border-gray-100 mt-2 pt-2">
                           <AnimatePresence mode="wait">
                             {!confirmingDelete ? (
@@ -239,9 +287,12 @@ const [deleteError, setDeleteError] = useState("");
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
+                                whileHover={{
+                                  scale: 1.01,
+                                }}
                                 transition={{ duration: 0.2, ease: easeInOut }}
                                 onClick={() => setConfirmingDelete(true)}
-                                className="w-full text-center text-[12px] font-medium text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                                className="w-full text-center text-[12px] font-medium rounded-lg py-2.5 text-white bg-red-500 hover:bg-red-700 transition-colors cursor-pointer"
                               >
                                 Delete account
                               </motion.button>

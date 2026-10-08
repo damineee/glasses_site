@@ -10,6 +10,7 @@ import {
 } from "../utils/lensConfigSteps";
 import { supabase } from "../utils/supabase";
 
+
 export default function LensConfigurator({
   isOpen,
   onClose,
@@ -18,7 +19,7 @@ export default function LensConfigurator({
   onAddToCart,
 }) {
   const [stepStack, setStepStack] = useState([STEP_TYPES.PRESCRIPTION]);
-  const [direction, setDirection] = useState("forward");
+
   const [previewOverride, setPreviewOverride] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -48,7 +49,6 @@ export default function LensConfigurator({
       };
     }, [isOpen]);
 
-  // Reset complet de fiecare dată când se deschide configuratorul
   useEffect(() => {
     if (isOpen) {
       setStepStack([STEP_TYPES.PRESCRIPTION]);
@@ -63,7 +63,6 @@ export default function LensConfigurator({
     }
   }, [isOpen]);
 
-  // Fetch inițial — datele de bază, o singură dată
   useEffect(() => {
     if (!isOpen) return;
 
@@ -109,14 +108,12 @@ export default function LensConfigurator({
   };
 
   const pushStep = (nextStep) => {
-    setDirection("forward");
     setStepStack((prev) => [...prev, nextStep]);
   };
 
 const goBack = () => {
-  setDirection("back");
 
-  // Doar scoatem ultimul pas din stivă, PĂSTRĂM opțiunile selectate în config
+
   setStepStack((prev) => prev.slice(0, -1));
   setPreviewOverride(null);
 };
@@ -204,21 +201,11 @@ const subtotal = useMemo(() => {
 
   const displayImage = previewOverride || config.lensColor?.previewImage || variant?.main_image_url;
 
-  const slideVariants = {
-    enter: (dir) => ({
-      x: dir === "forward" ? "100%" : "-30%",
-      opacity: dir === "forward" ? 1 : 0.5,
-    }),
-    center: { x: 0, opacity: 1 },
-    exit: (dir) => ({
-      x: dir === "forward" ? "-30%" : "100%",
-      opacity: dir === "forward" ? 0.5 : 1,
-    }),
-  };
+
 
   return (
     <div className="fixed inset-0 z-50 flex ">
-      {/* Poza fixă, nu se schimbă la navigare între pași */}
+     
       <div className="hidden md:flex flex-1 items-center justify-center bg-[#FCFBF9] relative">
         <img
           src={displayImage || "https://placehold.co/400"}
@@ -233,13 +220,13 @@ const subtotal = useMemo(() => {
         </div>
       </div>
 
-      {/* Overlay pentru mobil */}
+   
       <div
         onClick={handleClose}
         className="md:hidden fixed inset-0 bg-black/30"
       />
 
-      {/* Panoul drept, cu pașii */}
+    
       <div className="relative w-full md:w-[420px] h-full bg-white overflow-hidden flex flex-col">
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 shrink-0">
           {canGoBack ? (
@@ -285,17 +272,29 @@ const subtotal = useMemo(() => {
               <path d="m6 6 12 12" />
             </svg>
           </button>
-        </div>
+        </div>  
 
         <div className="relative flex-1 overflow-hidden">
-          <AnimatePresence mode="wait" custom={direction}>
+          <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
-              custom={direction}
-              variants={slideVariants}
+
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="absolute inset-0 overflow-y-auto px-6 py-6"
             >
+              <div className="md:hidden mb-6 flex flex-col items-center justify-center bg-[#FCFBF9] p-4 rounded-xl border border-gray-100">
+                <img
+                  src={displayImage || "https://placehold.co/400"}
+                  alt={product?.name}
+                  className="h-44 object-contain transition-opacity duration-300"
+                />
+                <div className="text-center mt-2">
+                  <p className="font-serif text-lg">{product?.name}</p>
+                  <p className="text-xs text-gray-500 italic">
+                    {variant?.color_name}
+                  </p>
+                </div>
+              </div>
               {currentStep === STEP_TYPES.PRESCRIPTION && (
                 <ChoiceList
                   title="Select a prescription type"
@@ -336,9 +335,7 @@ const subtotal = useMemo(() => {
                   onHoverItem={(color) =>
                     setPreviewOverride(color.previewImage)
                   }
-                  onLeaveItem={() =>
-                    setPreviewOverride( null)
-                  }
+                  onLeaveItem={() => setPreviewOverride(null)}
                 />
               )}
 
@@ -390,6 +387,7 @@ function ChoiceList({
       <div className="flex flex-col gap-3">
         {items.map((item) => {
           const isSelected=item.id ===selectedId;
+          const hexColor=item?.swatch_hex;
         return (
           <button
             key={item.id}
@@ -403,6 +401,15 @@ function ChoiceList({
               <p className="font-semibold">{item.name}</p>
               {item.description && (
                 <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+              )}
+            </div>
+            <div className="flex items-center gap-3 min-w-0">
+              {hexColor && (
+                <img
+                  src={hexColor}
+                  alt={item.name}
+                  className="w-30 h-6 object-contain shrink-0 rounded-sm"
+                />
               )}
             </div>
             {renderPrice && (

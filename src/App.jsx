@@ -16,6 +16,7 @@ import Favorites from './pages/Favorites';
 import Cart from "./pages/Cart";
 import MyOrders from "./pages/MyOrders";
 import Checkout from "./pages/Checkout";
+import Notfound from "./pages/NotFound";
 
 
   function AppContent() {
@@ -44,11 +45,13 @@ import Checkout from "./pages/Checkout";
         <Route path="/favorites" element={<Favorites />} />
         <Route
           path="/order-confirmation/:orderId"
-          element={<OrderConfirmation />} />
+          element={<OrderConfirmation />}
+        />
         <Route path="/account/addresses" element={<AddressBook />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Singin />} />
         <Route path="/history" element={<History />} />
+        <Route path="*" element={<Notfound />} />
       </Routes>
       {!shouldHideLayout && <Footercomp />}
     </>

@@ -28,7 +28,7 @@ export default function ProductDetail(){
     const [selectedVariant,setSelectedVariant]=useState(null);
     const [loading,setLoading]=useState(true);
     const [activeImage,setActiveImage]=useState(null);
-      const [activeImageType,setActiveImageType]=useState(null);
+    const [activeImageType,setActiveImageType]=useState(null);
    const [isOpenWidthMenu,setisOpenWidthMenu]=useState(false);
    const [isConfiguratorOpen, setIsConfiguratorOpen] = useState(false);
     const [openWidthGuide,setOpenWidthGuide]=useState(false);

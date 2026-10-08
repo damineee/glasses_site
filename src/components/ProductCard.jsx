@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import FavoritesButton from "./FavoritesButton";
+import { useCart } from "../contexts/CartContext";
 
 export function ColorSwatch({ v, isActive, onClick }) {
   const [hovered, setHovered] = useState(false);
-
+  
   return (
     <button
       type="button"
@@ -37,11 +38,12 @@ export default function ProductCard({
   showFavorite = true,
   onTryOnClick,
   onlyInitialVariant = false,
+  onOpenConfigurator,
 }) {
-    const variants =
-      onlyInitialVariant && initialVariant
-        ? [initialVariant]
-        : product?.product_variants || (initialVariant ? [initialVariant] : []);
+  const variants =
+    onlyInitialVariant && initialVariant
+      ? [initialVariant]
+      : product?.product_variants || (initialVariant ? [initialVariant] : []);
 
   const [activeVariant, setActiveVariant] = useState(
     initialVariant || variants[0],
@@ -68,7 +70,12 @@ export default function ProductCard({
 
     return targetWidth || "medium";
   };
-
+  const handleBuyclick = (e) => {
+    e.preventDefault();
+    if (onOpenConfigurator) {
+      onOpenConfigurator(activeVariant, activeWidth);
+    }
+  };
   const activeWidth = getActiveWidth();
   const linkto = `/${product?.category}/${product?.slug}/${activeVariant?.color_name_slug}?w=${activeWidth}`;
 
@@ -107,7 +114,7 @@ export default function ProductCard({
             <span className="text-[14px] font-bold text-center">Try on</span>
           </button>
         )}
-        
+
         <Link
           to={linkto}
           className="inset-0 absolute flex items-center justify-center p-7"
@@ -120,7 +127,6 @@ export default function ProductCard({
         </Link>
       </div>
 
-    
       <div className="flex-col flex px-4">
         <div className="flex flex-row bottom-34 justify-between items-center pt-5">
           <Link
@@ -134,7 +140,6 @@ export default function ProductCard({
           </p>
         </div>
 
-        
         {showSwatches && (
           <div className="flex flex-row items-center gap-3.5 pl-1 py-3">
             {variants.map((v) => (
@@ -148,15 +153,14 @@ export default function ProductCard({
           </div>
         )}
 
-        
-        <Link
-          to={linkto}
-          className="flex mt-1 border w-auto h-12 rounded-4xl items-center justify-center border-gray-300 transition-all duration-200 hover:bg-[#1050D0] hover:border-transparent hover:text-white"
+        <button
+          onClick={handleBuyclick}
+          className="flex mt-1 border cursor-pointer  w-auto h-12 rounded-4xl items-center justify-center border-gray-300 transition-all duration-200 hover:bg-[#1050D0] hover:border-transparent hover:text-white"
         >
           <p className="text-[16px] font-sans font-semibold">
             Select lenses and buy
           </p>
-        </Link>
+        </button>
       </div>
     </div>
   );

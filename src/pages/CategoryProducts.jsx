@@ -32,6 +32,9 @@ import mixed_mater from "../assets/material_filter/mixed.avif";
 import nylon_mater from "../assets/material_filter/nylon.avif";
 import { button, div, span } from "framer-motion/client";
 import ProductCard from "../components/ProductCard";
+import { useCart } from "../contexts/CartContext";
+import LensConfigurator from "../components/LensConfigurator";
+
 const FILTER_SECTIONS = [
   {
     key: "gender",
@@ -114,6 +117,9 @@ export default function CategoryProducts(){
   const [searchParams]=useSearchParams();
   const navigate=useNavigate();
 
+  
+ const [activeConfigurator, setActiveConfigurator] = useState(null);
+  const {addToCart}=useCart();
   const [isSideBarOpen, setIsSidebarOpen] = useState(() => {
     if (typeof window !== "undefined") {
       return window.innerWidth >= 640;
@@ -631,12 +637,35 @@ export default function CategoryProducts(){
                     key={prod.id || prod.slug}
                     product={prod}
                     selectedWidths={activeFilters.frame_width}
+                    onOpenConfigurator={(variant, frameWidth) => {
+                      setActiveConfigurator({
+                        product:prod,
+                        variant,
+                        frameWidth,
+                      });
+                    }}
                   />
                 ))}
               </div>
             </div>
           )}
         </main>
+        {activeConfigurator && (
+          <LensConfigurator
+            isOpen={Boolean(activeConfigurator)}
+            onClose={() => setActiveConfigurator(null)}
+            product={activeConfigurator.product}
+            variant={activeConfigurator.variant}
+            onAddToCart={async (itemConfig) => {
+              await addToCart({
+                ...itemConfig,
+                sizeSlug: activeConfigurator.frameWidth,
+              });
+              setActiveConfigurator(null);
+              navigate("/cart");
+            }}
+          />
+        )}
       </div>
     </div>
   );

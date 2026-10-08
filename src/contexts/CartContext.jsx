@@ -145,7 +145,7 @@ export const CartProvider = ({ children }) => {
 
     if (error) {
       console.error("Error updating quantity:", error.message);
-      setCartItems(prevItems); // rollback
+      setCartItems(prevItems); 
     }
   };
 

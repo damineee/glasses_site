@@ -8,7 +8,7 @@ const ORDER_SELECT = `
   total_price,
   payment_method,
   created_at,
-  shipping_addresses ( full_name, address_line1, address_line2, city, state, zip_code,country ,phone ),
+  shipping_address_snapshot,
   order_items (
     id,
     quantity,
@@ -70,7 +70,7 @@ export default function OrderConfirmation() {
     );
   }
 
-  const addr = order.shipping_addresses;
+  const addr = order.shipping_address_snapshot;
 
   return (
     <div className="w-full max-w-[700px] mx-auto px-4 sm:px-6 pt-25 xl:pt-32 pb-16">
@@ -157,10 +157,10 @@ export default function OrderConfirmation() {
           <p className="text-[14px] text-gray-700">{addr?.full_name}</p>
           <p className="text-[14px] text-gray-700">
             {addr?.address_line1}
-            {addr?.address_line2 ? `, ${addr.address_line2}` : ""}
+            {addr?.address_line2 ? ` ${addr.address_line2}` : ""}
           </p>
           <p className="text-[14px] text-gray-700">
-            {addr?.country}, {addr?.city}
+            {addr?.country} , {addr?.city}
             {addr?.state ? `, ${addr.state}` : ""} {addr?.zip_code}
           </p>
           <p className="text-[14px] text-gray-600 mt-1">{addr?.phone}</p>

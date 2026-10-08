@@ -332,7 +332,7 @@ const defaultAddress = addresses.find((a) => a.is_default) || addresses[0];
                                 ? `, ${defaultAddress.address_line2}`
                                 : ""}
                               <br />
-                              {defaultAddress.city}
+                              {defaultAddress.country} {defaultAddress.city}
                               {defaultAddress.state
                                 ? `, ${defaultAddress.state}`
                                 : ""}{" "}
@@ -353,11 +353,55 @@ const defaultAddress = addresses.find((a) => a.is_default) || addresses[0];
                               : "Add an address"}
                           </Link>
                         </div>
+
+                        <div className="border-b border-gray-100 pb-2">
+                          <p className="text-[12px] text-gray-400 font-medium mb-1.5">
+                            Order history
+                          </p>
+                          <Link
+                            to="/my-orders"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center justify-between gap-2 py-2 px-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-[14px] font-semibold text-gray-800 transition-colors"
+                          >
+                            <span className="flex items-center gap-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                                <rect x="8" y="2" width="8" height="4" rx="1" />
+                                <path d="M9 13h6" />
+                                <path d="M9 17h6" />
+                              </svg>
+                              My orders
+                            </span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="text-gray-400"
+                            >
+                              <path d="m9 18 6-6-6-6" />
+                            </svg>
+                          </Link>
+                        </div>
                         <motion.button
-                        whileHover={{
-                                  scale: 1.02,
-                                  transition: { duration: 0.1, ease: "linear" },
-                                }}
+                          whileHover={{
+                            scale: 1.02,
+                          }}
                           onClick={handleSignOut}
                           className="w-full mt-1 flex items-center justify-center gap-2 py-2 px-3 bg-red-50  text-red-800 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
                         >
@@ -387,12 +431,11 @@ const defaultAddress = addresses.find((a) => a.is_default) || addresses[0];
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 whileHover={{
-                                  scale: 1.02,
-                                  transition: { duration: 0.1, ease: "linear" },
+                                  scale: 1.01,
                                 }}
                                 transition={{ duration: 0.2, ease: easeInOut }}
                                 onClick={() => setConfirmingDelete(true)}
-                                className="w-full text-center text-[12px] py-2.5 font-medium rounded-lg text-white bg-red-500 hover:bg-red-700 transition-colors cursor-pointer"
+                                className="w-full text-center gap-2 text-[12px] py-2.5 font-medium rounded-lg text-white bg-red-500 hover:bg-red-700 transition-colors cursor-pointer"
                               >
                                 Delete account
                               </motion.button>
